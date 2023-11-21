@@ -1,0 +1,5 @@
+# mountainScannerJS
+
+## run
+
+`npm start`
