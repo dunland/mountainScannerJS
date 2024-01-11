@@ -1,15 +1,33 @@
 const movingRegion = document.querySelector('.moving-region');
+var values, centerX;
 
+// ---------------- Script wrapper: ------------------
+fetch("./data.json")
+    .then((res) => res.json())
+    .then((data) => {
+        values = data.values;
+        moveRegion();
+    })
+
+
+// ------------------- functions: --------------------
 function moveRegion() {
-    let position = 0;
+    let position = 0, regionWidth = 20;
     const screenWidth = window.innerWidth;
+    console.log(innerWidth, screenWidth);
     const moveSpeed = 1; // Adjust the speed of the moving region
 
     function animate() {
         position += moveSpeed;
+        centerX = position + regionWidth / 2;
         if (position > screenWidth) {
-            position = -20; // Reset the position when the region moves out of the screen
+            position = -regionWidth; // Reset the position when the region moves out of the screen
         }
+
+        const index = Math.floor((centerX / screenWidth) * values.length);
+        const value = values[index];
+        displayValue(centerX, value);
+
         movingRegion.style.left = position + 'px';
         let xpos = screenWidth - position;
         movingRegion.style.backgroundPosition = `${xpos}px 0px`;
@@ -19,7 +37,7 @@ function moveRegion() {
     animate();
 }
 
-// Function to invert the pixels of the underlying image
+// TODO: Function to invert the pixels of the underlying image
 function invertImage() {
     const fullscreenImage = document.querySelector('.fullscreen-image');
     const canvas = document.createElement('canvas');
@@ -44,5 +62,12 @@ function invertImage() {
     // movingRegion.style.backgroundImage = imageData;
 }
 
-moveRegion();
-invertImage();
+function displayValue(x, y) {
+
+    const valueElement = document.querySelector('.value-display');
+
+    // Update the position and content of the value display
+    valueElement.style.left = x + 15 + 'px';
+    valueElement.style.top = y - 15 + 'px';
+    valueElement.textContent = '___' + y;
+}

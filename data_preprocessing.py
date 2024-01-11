@@ -1,3 +1,11 @@
+"""
+use openCV to manually pre-processes images found in public/:
+- applies threshold to get black and white pixels only
+- once done adjusting the thresholds, hit ENTER (twice). A .json-file with the positions of the lowermost black pixel will be exported to public/
+
+dunland, 2014-01-09
+"""
+
 import cv2
 import numpy as np
 import json

@@ -8,7 +8,7 @@ body, html {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
+    /* width: 100vw; */
     height: 100vh;
     object-fit: cover;
     z-index: -1;
@@ -22,6 +22,14 @@ body, html {
     height: 100vh;
     /*background-color: white; */ /* Color of the moving region */
     background-image: url("invert.jpg");
+    /* background-size: 100vw, cover;
+    background-repeat:repeat-x; */
     /* background-position: right 100px; */
     z-index: 1;
+}
+
+.value-display {
+    color: red;
+    position: fixed;
+    font-family: 'Courier New', Courier, monospace;
 }
