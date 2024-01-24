@@ -1,14 +1,28 @@
 const movingRegion = document.querySelector('.moving-region');
 var values, centerX;
+// import { WebMidi } from "./webmidi/dist/iife/webmidi.iife";
+import {WebMidi} from "./webmidi/dist/esm/webmidi.esm.js";
 
 // ---------------- Script wrapper: ------------------
+document.addEventListener("DOMContentLoaded", () => {
+
 fetch("./data.json")
     .then((res) => res.json())
     .then((data) => {
         values = data.values;
+
+        WebMidi
+        .enable()
+        .then(onMidiEnabled)
+        .catch(err => alert(err));
+
         moveRegion();
     })
 
+function onMidiEnabled() {
+    console.log(WebMidi.inputs);
+    console.log(WebMidi.outputs);
+    }
 
 // ------------------- functions: --------------------
 function moveRegion() {
@@ -71,3 +85,4 @@ function displayValue(x, y) {
     valueElement.style.top = y - 15 + 'px';
     valueElement.textContent = '___' + y;
 }
+})
