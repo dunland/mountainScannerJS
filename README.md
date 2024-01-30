@@ -8,6 +8,12 @@
 - `npm start` to just start
 - `yarn server` to start & keep track of code changes (dev mode)
 
-## problems
+## To Do
 
-> SecurityError: WebMIDI requires a site permission add-on to activate
+- [ ] verbose display box
+- [ ] adjustable speed
+  - [ ] +/-
+  - [ ] nanoKontrol
+- [ ] load more images
+  - [ ] consecutively
+  - [ ] parallel displays
