@@ -11,13 +11,13 @@ export function changeMoveSpeed(newSpeed){
   console.log("moveSpeed = ", moveSpeed);
 };
 // ---------------- Script wrapper: ------------------
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  loadJSON("./data.json");
+  await loadJSON("./data.json");
 
-  console.log(values);
+  console.log(values); // returns empty array
 
-  // moveRegion(values);
+  moveRegion(values);
 
 })
 
@@ -35,7 +35,7 @@ function moveRegion(values) {
     centerX = position + regionWidth / 2;
     if (position > screenWidth) {
       position = -regionWidth; // Reset the position when the region moves out of the screen
-    } else if (position < 0){
+    } else if (position < 0 && moveSpeed < 0){
       position = screenWidth;
     }
 
@@ -151,7 +151,5 @@ async function loadJSON(dataFile) {
       console.error("Error loading ./data.json! (Maybe try a different browser)", error);
     })
 
-
-  moveRegion(values);
 
 }
