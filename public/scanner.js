@@ -1,12 +1,12 @@
 import { onKeyDown } from "./UserInteraction.js";
+import { drawValueLine } from "./canvas.js";
 import { WebMidi } from "./webmidi/dist/esm/webmidi.esm.js";
 
 var values = [];
-var centerX = 0;
-// import { WebMidi } from "./webmidi/dist/iife/webmidi.iife";
+var centerX = 0; // center of movingRegion
 var mySynth;
-export var moveSpeed = 10;
-export function changeMoveSpeed(newSpeed){ 
+export var moveSpeed = 2;
+export function changeMoveSpeed(newSpeed) {
   moveSpeed = newSpeed
   console.log("moveSpeed = ", moveSpeed);
 };
@@ -15,8 +15,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadJSON("./data.json");
 
-  console.log(values); // returns empty array
+  console.log(`values.length: ${values.length}`);
+  console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
 
+  await drawValueLine(values);
   moveRegion(values);
 
 })
@@ -26,33 +28,36 @@ addEventListener("keydown", onKeyDown);
 // ------------------- functions: --------------------
 function moveRegion(values) {
 
-  let position = 0, regionWidth = 20;
+  const fullscreenImage = document.getElementById("FullscreenImage");
+  let position = 0, regionWidth = 20, displacement = fullscreenImage.width - innerWidth;
+  console.log(`displacement: ${displacement}`);
   const screenWidth = window.innerWidth;
-  console.log(innerWidth, screenWidth);
+  console.log(`innerWidth: ${innerWidth}, screenWidth: ${screenWidth}`);
 
   function animate() {
     position += moveSpeed;
     centerX = position + regionWidth / 2;
     if (position > screenWidth) {
       position = -regionWidth; // Reset the position when the region moves out of the screen
-    } else if (position < 0 && moveSpeed < 0){
+    } else if (position < 0 && moveSpeed < 0) {
       position = screenWidth;
     }
 
-    const index = Math.floor((centerX / screenWidth) * values.length);
-    const value = values[index % values.length];
+    const index = Math.floor((centerX / fullscreenImage.width) * values.length);
+    // console.log(index);
+    var value = values[index];
     const valueAsMidi = 127 - (value / 1080 * 127);
-    displayValue(centerX, value);
+    displayValue(centerX, value, index);
 
     // console.log(`value ${value} as midi: ${ 127 - (value/1080 * 127)}`);
     if (mySynth)
       mySynth.sendControlChange(44, valueAsMidi);
     // WebMidi.outputs[1].sendNoteOn(127 - (value/1080 * 127));
 
-    const movingRegion = document.querySelector('.moving-region');
+    const movingRegion = document.querySelector('#movingRegion');
     movingRegion.style.left = position + 'px';
     let xpos = screenWidth - position;
-    movingRegion.style.backgroundPosition = `${xpos}px 0px`;
+    movingRegion.style.backgroundPosition = `${xpos + displacement}px 0px`;
     requestAnimationFrame(animate);
   }
 
@@ -61,7 +66,7 @@ function moveRegion(values) {
 
 // TODO: Function to invert the pixels of the underlying image
 function invertImage() {
-  const fullscreenImage = document.querySelector('.fullscreen-image');
+  const fullscreenImage = document.querySelector('#FullscreenImage');
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   canvas.width = fullscreenImage.width;
@@ -84,14 +89,14 @@ function invertImage() {
   // movingRegion.style.backgroundImage = imageData;
 }
 
-function displayValue(x, y) {
+function displayValue(x, y, index) {
 
   const valueElement = document.querySelector('.value-display');
 
   // Update the position and content of the value display
   valueElement.style.left = x + 15 + 'px';
   valueElement.style.top = y - 15 + 'px';
-  valueElement.textContent = '___' + y;
+  valueElement.textContent = '___' + y + "\n" + index;
 }
 
 
@@ -101,6 +106,10 @@ async function loadJSON(dataFile) {
     .then((res) => res.json())
     .then((data) => {
       values = data.values;
+      for (let index = 0; index < values.length; index++) {
+        values[index] = Math.round(values[index] / 1080 * innerHeight);
+      }
+      
       console.log(values);
 
       try {
@@ -141,7 +150,7 @@ async function loadJSON(dataFile) {
           })
           .catch(err => alert(err));
 
-        console.log(WebMidi.inputs);
+        console.log(`WebMidi.inputs: ${WebMidi.inputs}`);
       } catch (error) {
         console.error("could not initialize MIDI.", error);
       }

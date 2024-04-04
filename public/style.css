@@ -4,32 +4,31 @@ body, html {
     overflow: hidden;
 }
 
-.fullscreen-image {
-    position: fixed;
+#FullscreenImage {
     top: 0;
     left: 0;
-    /* width: 100vw; */
     height: 100vh;
-    object-fit: cover;
     z-index: -1;
 }
 
-.moving-region {
+#movingRegion {
     position: fixed;
     top: 0;
     left: 0;
     width: 20px;
+    /* opacity: 0.5; */
     height: 100vh;
-    /*background-color: white; */ /* Color of the moving region */
-    background-image: url("invert.jpg");
-    /* background-size: 100vw, cover;
-    background-repeat:repeat-x; */
-    /* background-position: right 100px; */
+    background-image: url("silhouettes/invert.jpg");
     z-index: 1;
+    background-size: cover;
 }
 
 .value-display {
     color: red;
     position: fixed;
     font-family: 'Courier New', Courier, monospace;
+}
+
+#canvas { 
+    position:fixed;
 }
