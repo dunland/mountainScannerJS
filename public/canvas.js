@@ -1,5 +1,7 @@
-// Create a canvas that extends the entire screen
-// and it will draw right over the other html elements, like buttons, etc
+import { values } from "./data.js";
+export var showData = true;
+export function toggleShowData() { showData = !showData };
+
 var canvas = document.getElementById("canvas");
 const fullscreenImage = document.getElementById("FullscreenImage");
 
@@ -8,7 +10,7 @@ var ctx = canvas.getContext("2d");
 canvas.width = fullscreenImage.width;
 canvas.height = innerHeight;
 
-export async function drawValueLine(values) {
+export async function drawValueLine() {
     var canvas = document.getElementById("canvas");
     console.log("canvas.height:", canvas.height, "canvas.width:", canvas.width);
     var ctx = canvas.getContext("2d");
@@ -22,4 +24,8 @@ export async function drawValueLine(values) {
         ctx.lineTo(Math.floor(index / values.length * fullscreenImage.width), value, 1, 1);
     }
     ctx.stroke();
+}
+
+export function clearCanvas(){
+    canvas.getContext("2d").clearRect(0,0,canvas.width, canvas.height);
 }

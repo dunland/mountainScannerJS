@@ -1,8 +1,7 @@
 import { onKeyDown } from "./UserInteraction.js";
 import { drawValueLine } from "./canvas.js";
-import { WebMidi } from "./webmidi/dist/esm/webmidi.esm.js";
+import { loadJSON, values } from "./data.js";
 
-var values = [];
 var centerX = 0; // center of movingRegion
 var mySynth;
 export var moveSpeed = 2;
@@ -14,19 +13,20 @@ export function changeMoveSpeed(newSpeed) {
 document.addEventListener("DOMContentLoaded", async () => {
 
   await loadJSON("./data.json");
+  console.log(values);
 
   console.log(`values.length: ${values.length}`);
   console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
 
-  await drawValueLine(values);
-  moveRegion(values);
+  await drawValueLine();
+  moveRegion();
 
 })
 
 addEventListener("keydown", onKeyDown);
 
 // ------------------- functions: --------------------
-function moveRegion(values) {
+function moveRegion() {
 
   const fullscreenImage = document.getElementById("FullscreenImage");
   let position = 0, regionWidth = 20, displacement = fullscreenImage.width - innerWidth;
@@ -97,68 +97,4 @@ function displayValue(x, y, index) {
   valueElement.style.left = x + 15 + 'px';
   valueElement.style.top = y - 15 + 'px';
   valueElement.textContent = '___' + y + "\n" + index;
-}
-
-
-async function loadJSON(dataFile) {
-
-  const response = await fetch(dataFile)
-    .then((res) => res.json())
-    .then((data) => {
-      values = data.values;
-      for (let index = 0; index < values.length; index++) {
-        values[index] = Math.round(values[index] / 1080 * innerHeight);
-      }
-      
-      console.log(values);
-
-      try {
-
-        // Enable WEBMIDI.js and trigger the onEnabled() function when ready
-        WebMidi
-          .enable()
-          .then(() => {
-            // Display available MIDI input devices
-            if (WebMidi.inputs.length < 1) {
-              document.body.innerHTML += "No device detected.";
-            } else {
-              WebMidi.inputs.forEach((device, index) => {
-                console.log("Midi Inputs:" + `${index}: ${device.name}`);
-              });
-
-              // mySynth = WebMidi.inputs[0];
-              // const mySynth = WebMidi.getInputByName("TYPE NAME HERE!")
-            }
-
-            if (WebMidi.outputs.length < 1) {
-              console.log("no output devices detected.");
-            }
-            else {
-              console.log("Midi Outputs:");
-              WebMidi.outputs.forEach((device, index) => {
-                console.log(`${index}: ${device.name}`);
-              });
-
-              // mySynth = WebMidi.outputs[1];
-              mySynth = WebMidi.getOutputByName("USB MIDI Interface MIDI 1");
-            }
-
-          }) // init output synth
-          .then(() => {
-            console.log(values);
-            moveRegion(values);
-          })
-          .catch(err => alert(err));
-
-        console.log(`WebMidi.inputs: ${WebMidi.inputs}`);
-      } catch (error) {
-        console.error("could not initialize MIDI.", error);
-      }
-
-    })
-    .catch(error => {
-      console.error("Error loading ./data.json! (Maybe try a different browser)", error);
-    })
-
-
 }
