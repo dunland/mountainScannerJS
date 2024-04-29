@@ -11,9 +11,14 @@
 ## To Do
 
 - [ ] verbose display box
-- [ ] adjustable speed
-  - [ ] +/-
+- [x] adjustable speed
+  - [x] +/-
   - [ ] nanoKontrol
+- **data preprocessing:**
+  - [ ] invert image
+  - [ ] json creation
+- **functions**:
+  - [ ] multiple lines per image for different thresholds
 - [ ] load more images
-  - [ ] consecutively
+  - [x] consecutively using ENTER
   - [ ] parallel displays

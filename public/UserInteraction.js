@@ -1,4 +1,5 @@
 import { clearCanvas, drawValueLine, showData, toggleShowData } from "./canvas.js";
+import { getNextImage } from "./data.js";
 import { changeMoveSpeed, moveSpeed } from "./scanner.js";
 
 export function onKeyDown(keyEvent) {
@@ -15,6 +16,10 @@ export function onKeyDown(keyEvent) {
             toggleShowData();
             if (showData) drawValueLine();
             else clearCanvas();
+            break;
+
+        case 'Enter':
+            getNextImage();
             break;
 
         default:
