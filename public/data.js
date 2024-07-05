@@ -1,3 +1,4 @@
+import { canvas } from "./fsm.js";
 export class Data {
 
   currentImageIndex = -1;
@@ -5,16 +6,39 @@ export class Data {
   rawValues = [];
   imagePath;
 
+  constructor() {
+    // this.cv = window.cv;
+    // console.log(cv);
+    this.img;
+    this.gray;
+    this.binary;
+    this.lowerThresh = 0, this.upperThresh = 255;
+    this.inputFolder = 'public';
+    this.outputFolder = 'public';
+  }
+
+  /**
+   * 
+   * @param {string} dataFile url to json file 
+   */
   async loadJSON(dataFile) {
 
     const response = await fetch(dataFile)
       .then((res) => res.json())
       .then((jsonData) => {
+        console.log(jsonData);
         this.imagePath = `silhouettes/${jsonData.imagePath}`;
         console.log("get image", this.imagePath);
+        if (jsonData.values.length > 0) {
         this.rawValues = jsonData.values;
         console.log("rawValues:", this.rawValues);
-        this.remapInputValues(this.rawValues);
+          this.remapInputValues();
+        }
+        else {
+          this.createEmptyValues();
+          jsonData.values = this.values;
+          this.updateJsonData(jsonData);
+        }
       })
       .catch(error => {
         console.error("Error loading ./data.json! (Maybe try a different browser)", error);
@@ -28,6 +52,31 @@ export class Data {
     console.log('remapped:', this.values);
   }
 
+  createEmptyValues() {
+    for (let index = 0; index < canvas.htmlCanvas.width; index++) {
+      this.values[index] = canvas.htmlCanvas.height / 2;
+    }
+  }
+
+  updateJsonData(jsonData) {
+    console.log(jsonData);
+    // Send JSON string to the server
+    fetch('upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(jsonData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
   async getNextImage() {
     fetch('/silhouettes')
       .then(response => response.json())
@@ -35,12 +84,16 @@ export class Data {
         // Use the list of valid file paths here
         this.currentImageIndex = (this.currentImageIndex + 1) % silhouettes.length;
         console.log(silhouettes);
-        let currentImageData = silhouettes[this.currentImageIndex];
+        let currentImageFile = silhouettes[this.currentImageIndex];
+        let currentImageJson = `${currentImageFile.split(".")[0]}.json`
         console.log(
-          `this.currentImageIndex:${this.currentImageIndex}, silhouettes: ${silhouettes}, currentImageData: ${currentImageData}`
+          `this.currentImageIndex:${this.currentImageIndex},
+           silhouettes: ${silhouettes},
+           currentImageFile: ${currentImageFile},
+           currentImageJson: ${currentImageJson}`
         );
 
-        await this.loadJSON(`silhouettes/${currentImageData}`);
+        await this.loadJSON(`silhouettes/${currentImageJson}`);
 
         // movingRegion.style.backgroundImage = currentImageData;
         document.getElementById('FullscreenImage').src = this.imagePath;

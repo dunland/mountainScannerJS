@@ -11,7 +11,7 @@ export class Canvas {
     }
 
     async drawValueLine(values) {
-        console.log("canvas.height:", this.htmlCanvas.height, "canvas.width:", this.htmlCanvas.width);
+        console.log("Drawing red data line to canvas.height:", this.htmlCanvas.height, "canvas.width:", this.htmlCanvas.width);
         var ctx = this.htmlCanvas.getContext("2d");
         ctx.strokeStyle = "red";
         ctx.beginPath();

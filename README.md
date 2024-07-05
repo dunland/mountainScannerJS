@@ -1,6 +1,6 @@
 # mountainScannerJS
 
-- uses nodeJS for the `requestAnimationFrame` function
+- nodeJS needed for the `requestAnimationFrame` function
 - [midijs library](https://webmidijs.org/docs/) works on Google Chrome only!
 
 ## run
@@ -22,3 +22,11 @@
 - [ ] load more images
   - [x] consecutively using ENTER
   - [ ] parallel displays
+- **usability**:
+  - [ ] change data x when resizing image
+  - [ ] hide mouse when fullscreen application
+
+  ## Usage
+
+  - Alle Bilddateien jpeg/jpg/png im Ordner ./silhouettes/ werden gesichtet. Falls nicht vorhanden, wird für jedes Bild eine zugehörige .json-Datei mit einem leeren Array für `values` erzeugt.
+  - Beim erstmaligen Laden dieses Arrays werden alle Werte auf `canvas.height / 2` gesetzt
