@@ -1,5 +1,4 @@
-import { clearCanvas, drawValueLine } from "./canvas.js";
-import { remapInputValues, rawValues, values } from "./data.js";
+import { data, canvas } from "./fsm.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // Initial setup
@@ -12,9 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
 function resizeFullscreenImage() {
 
     // remap data:
-    clearCanvas();
-    remapInputValues(rawValues);
-    drawValueLine();
+    canvas.clearCanvas();
+    data.remapInputValues(data.rawValues);
+    canvas.drawValueLine(data.values);
 
     // resize bg:
     const fullscreenImage = document.querySelector('#FullscreenImage');
