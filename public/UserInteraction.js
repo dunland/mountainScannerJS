@@ -1,4 +1,4 @@
-import { scanner, data, canvas } from "./fsm.js";
+import { scanner, data, canvas, fsm } from "./fsm.js";
 
 export function onKeyDown(keyEvent) {
     console.log(keyEvent.key);
@@ -17,12 +17,33 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Enter':
-            data.getNextImage();
-            canvas.clearCanvas();
-            if (canvas.showData) canvas.drawValueLine(data.values);
+            fsm.next();
+            // fsm.dispatch('leave');
             break;
 
+        case 'Backspace':
+            fsm.previous();
+            break;
+
+        case 'Tab':
+            console.log("to do: leave state without saving");
         default:
             break;
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // create navigation elements:
+    fsm.states.forEach(state => {
+
+        let newDiv = document.createElement('div');
+        newDiv.className = 'navigationIcon';
+        newDiv.id = `navigation_${state.name}`;
+        newDiv.textContent = state.name;
+        document.querySelector("#navigation").appendChild(newDiv);
+    });
+
+    document.getElementById(`navigation_${fsm.state.name}`).style.borderWidth = "3px";
+
+});
