@@ -15,19 +15,18 @@ export class Scanner {
 
         this.fullscreenImage = document.getElementById("FullscreenImage");
         this.displacement = this.fullscreenImage.width - innerWidth;
-        this.animate = this.animate.bind(this); // when a function is called as a callback (such as in requestAnimationFrame), the context (this) is lost unless explicitly bound.
+
+        this.upperLine = Math.floor(window.innerHeight / 3);
+        this.lowerLine = Math.floor(window.innerHeight * 2 / 3);
     }
 
     // ------------------- functions: --------------------
     moveRegion() {
 
-        console.log(`displacement: ${this.displacement}`);
-        console.log(`innerWidth: ${innerWidth}, screenWidth: ${screenWidth}`);
+        // console.log(`displacement: ${this.displacement}`);
+        // console.log(`innerWidth: ${innerWidth}, screenWidth: ${screenWidth}`);
 
-        requestAnimationFrame(this.animate);
-    }
-
-    animate() {
+        // console.log(this.centerX);
 
         this.position += this.moveSpeed;
         this.centerX = this.position + this.regionWidth / 2;
@@ -54,7 +53,6 @@ export class Scanner {
         movingRegion.style.left = this.position + 'px';
         let xpos = screenWidth - this.position;
         movingRegion.style.backgroundPosition = `${xpos + this.displacement}px 0px`;
-        requestAnimationFrame(this.animate);
     }
 
     displayValue(x, y, index) {

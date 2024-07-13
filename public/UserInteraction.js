@@ -1,7 +1,6 @@
 import { scanner, data, canvas, fsm } from "./fsm.js";
 
 export function onKeyDown(keyEvent) {
-    console.log(keyEvent.key);
     switch (keyEvent.key) {
         case '+':
             scanner.moveSpeed = scanner.moveSpeed + 1;
@@ -26,8 +25,21 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Tab':
-            console.log("to do: leave state without saving");
+            fsm.skip();
+            break;
+
+        case 'ArrowUp':
+            if (fsm.state.up)
+                fsm.state.up();
+            break;
+
+        case 'ArrowDown':
+            if (fsm.state.down)
+                fsm.state.down();
+            break;
+
         default:
+            console.log(keyEvent.key);
             break;
     }
 }

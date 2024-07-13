@@ -29,7 +29,18 @@ class FSM {
       name: 'upperLine',
       init: () => {
       },
-      leave: () => { }
+      leave: () => { },
+      up: () => {
+        scanner.upperLine -= 1;
+        canvas.drawHorizontalLine(scanner.upperLine)
+        console.log(scanner.upperLine);
+      },
+      down: () => {
+        scanner.upperLine += 1;
+        canvas.drawHorizontalLine(scanner.upperLine)
+        console.log(scanner.upperLine);
+      }
+
     }, {
 
       name: 'lowerLine',
@@ -47,12 +58,12 @@ class FSM {
     {
       name: 'nextImage',
       init: () => {
+      },
+      leave: () => {
         data.getNextImage();
         canvas.clearCanvas();
         if (canvas.showData) canvas.drawValueLine(data.values);
-      },
-      leave: () => { }
-
+      }
     }
 
   ]
@@ -79,7 +90,17 @@ class FSM {
     this.state.init();
   }
 
+  /**
+   * go to next state without calling leave()
+   */
+  skip() {
+    this.stateIdx = (this.stateIdx + 1) % this.states.length;
+    this.setState(this.states[this.stateIdx]);
+    this.state.init();
+  }
+
   setState(newState) {
+    console.log(newState.name);
     // set border thickness of all to 1
     for (let icon of document.getElementsByClassName('navigationIcon')) {
       icon.style.borderWidth = "1px";
@@ -105,14 +126,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   console.log(`dataHandler.values.length: ${data.values.length}`);
   console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
 
-  await canvas.drawValueLine(data.values);
+  canvas.drawHorizontalLine(scanner.upperLine);
+  canvas.drawHorizontalLine(scanner.lowerLine);
+
+  // await canvas.drawValueLine(data.values);
   // scanner.moveRegion();
+  // canvas.animate();
 
 })
 
 addEventListener("keydown", onKeyDown);
 
-window.addEventListener('load', loadOpenCv); // run when all code is fully loaded
+window.addEventListener('load', () => { // run when all code is fully loaded
+  console.log("openCV loaded!");
+  canvas.animate(); 
+});
 
 function loadOpenCv() {
 
@@ -120,14 +148,14 @@ function loadOpenCv() {
 
   console.assert(cv, "cv is", cv);
 
-  let canvasElement = document.getElementById("canvas");
+  let htmlCanvas = document.getElementById("canvas");
   let imgElement = document.querySelector("#FullscreenImage");
-  let ctx = canvasElement.getContext('2d');
+  let ctx = htmlCanvas.getContext('2d');
   ctx.drawImage(imgElement, 0, 0);
   console.assert(ctx, "ctx is", ctx);
 
   // read from canvas:
-  let imgData = ctx.getImageData(0, 0, canvasElement.width, canvasElement.height);
+  let imgData = ctx.getImageData(0, 0, htmlCanvas.width, htmlCanvas.height);
   console.assert(imgData, "no imgData", imgData);
   let src = cv.matFromImageData(imgData);
   let dst = new cv.Mat();
@@ -137,10 +165,10 @@ function loadOpenCv() {
   cv.cvtColor(dst, dst, cv.COLOR_RGB2RGBA);
   imgData = new ImageData(new Uint8ClampedArray(dst.data), dst.cols, dst.rows);
 
-  ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-  canvasElement.width = imgData.width;
-  canvasElement.height = imgData.height;
-  console.log(imgData.width, imgData.height, canvasElement.width, canvasElement.height, imgData);
+  ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height);
+  htmlCanvas.width = imgData.width;
+  htmlCanvas.height = imgData.height;
+  console.log(imgData.width, imgData.height, htmlCanvas.width, htmlCanvas.height, imgData);
   ctx.putImageData(imgData, 0, 0);
 
 }

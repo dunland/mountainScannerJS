@@ -10,6 +10,7 @@
 
 ## To Do
 
+- [ ] animation loop for entire canvas in one function
 - [ ] verbose display box
 - [x] adjustable speed
   - [x] +/-
