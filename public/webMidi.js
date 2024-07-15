@@ -3,8 +3,12 @@ import { WebMidi } from "./webmidi/dist/esm/webmidi.esm.js";
 export class Midi {
 
   synth;
+  cc;
 
   static loadWebMidi() {
+
+    this.cc = 44;
+
     try {
 
       // Enable WEBMIDI.js and trigger the onEnabled() function when ready

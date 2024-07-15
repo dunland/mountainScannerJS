@@ -11,13 +11,10 @@ export function onKeyDown(keyEvent) {
 
         case 'v':
             canvas.showData = !canvas.showData;
-            if (canvas.showData) canvas.drawValueLine(data.values);
-            else canvas.clearCanvas();
             break;
 
         case 'Enter':
             fsm.next();
-            // fsm.dispatch('leave');
             break;
 
         case 'Backspace':
@@ -30,12 +27,12 @@ export function onKeyDown(keyEvent) {
 
         case 'ArrowUp':
             if (fsm.state.up)
-                fsm.state.up();
+                document.querySelector('#info').textContent = fsm.state.up();
             break;
 
         case 'ArrowDown':
             if (fsm.state.down)
-                fsm.state.down();
+                document.querySelector('#info').textContent = fsm.state.down();
             break;
 
         default:
@@ -56,6 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector("#navigation").appendChild(newDiv);
     });
 
+    let newDiv = document.createElement('div');
+    newDiv.className = 'info';
+    newDiv.id = 'info';
+    newDiv.textContent = 'info';
+    document.querySelector("#navigation").appendChild(newDiv);
+
     document.getElementById(`navigation_${fsm.state.name}`).style.borderWidth = "3px";
 
 });
+
+function updateInfo(variable){
+    console.log(window['Midi.cc']);
+    document.querySelector('#info').textContent = window['Midi.cc'];
+}

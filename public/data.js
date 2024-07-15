@@ -9,7 +9,8 @@ export class Data {
   constructor() {
     // this.cv = window.cv;
     // console.log(cv);
-    this.img;
+    this.imgElement = document.querySelector("#FullscreenImage");
+    this.mat;
     this.gray;
     this.binary;
     this.lowerThresh = 0, this.upperThresh = 255;
@@ -30,8 +31,8 @@ export class Data {
         this.imagePath = `silhouettes/${jsonData.imagePath}`;
         console.log("get image", this.imagePath);
         if (jsonData.values.length > 0) {
-        this.rawValues = jsonData.values;
-        console.log("rawValues:", this.rawValues);
+          this.rawValues = jsonData.values;
+          console.log("rawValues:", this.rawValues);
           this.remapInputValues();
         }
         else {
@@ -95,8 +96,18 @@ export class Data {
 
         await this.loadJSON(`silhouettes/${currentImageJson}`);
 
+        /*
         // movingRegion.style.backgroundImage = currentImageData;
-        document.getElementById('FullscreenImage').src = this.imagePath;
+        this.imgElement = document.getElementById('FullscreenImage');
+        this.imgElement.src = this.imagePath;
+
+        // read from canvas:
+        let imgData = ctx.getImageData(0, 0, htmlCanvas.width, htmlCanvas.height);
+        console.assert(imgData, "no imgData", imgData);
+        let src = cv.matFromImageData(imgData);
+        let dst = new cv.Mat();
+        */
+
       })
       .catch(error => {
         console.error('Error fetching valid files:', error);

@@ -8,6 +8,32 @@ export const data = new Data();
 export const scanner = new Scanner();
 export const canvas = new Canvas();
 
+// ---------------- Script wrapper: ------------------
+document.addEventListener("DOMContentLoaded", async () => {
+
+  Midi.loadWebMidi();
+  // data.getNextImage();
+  console.log(data.values);
+
+  console.log(`dataHandler.values.length: ${data.values.length}`);
+  console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
+
+  canvas.drawHorizontalLine(scanner.upperLine);
+  canvas.drawHorizontalLine(scanner.lowerLine);
+
+  // await canvas.drawValueLine(data.values);
+  // scanner.moveRegion();
+  // canvas.animate();
+
+})
+
+addEventListener("keydown", onKeyDown);
+
+window.addEventListener('load', () => { // run when all code is fully loaded
+  console.log("openCV loaded!");
+  canvas.animate();
+});
+
 class FSM {
 
   stateIdx = 0;
@@ -16,48 +42,77 @@ class FSM {
     {
       name: "imgThreshold",
       init: () => {
+        document.querySelector('#info').textContent = "";
       },
       leave: () => { }
     },
     {
       name: 'midiCC',
       init: () => {
+        document.querySelector('#info').textContent = Midi.cc;
+            },
+      leave: () => { },
+      up: () => {
+        Midi.cc = (Midi.cc + 1) % 128;
+        document.querySelector('#info').textContent = Midi.cc;
+        return Midi.cc;
       },
-      leave: () => { }
+      down: () => {
+        Midi.cc -= 1;
+        if (Midi.cc < 0)
+          Midi.cc = 127;
+        document.querySelector('#info').textContent = Midi.cc;
+        return Midi.cc;
+      },
     }, {
 
       name: 'upperLine',
       init: () => {
+        document.querySelector('#info').textContent = scanner.upperLine;
       },
       leave: () => { },
       up: () => {
         scanner.upperLine -= 1;
         canvas.drawHorizontalLine(scanner.upperLine)
-        console.log(scanner.upperLine);
+        return scanner.upperLine;
       },
       down: () => {
         scanner.upperLine += 1;
         canvas.drawHorizontalLine(scanner.upperLine)
-        console.log(scanner.upperLine);
+        return scanner.upperLine;
       }
 
     }, {
 
       name: 'lowerLine',
       init: () => {
+        document.querySelector('#info').textContent = scanner.lowerLine;
       },
-      leave: () => { }
+      leave: () => { },
+      up: () => {
+        scanner.lowerLine -= 1;
+        canvas.drawHorizontalLine(scanner.lowerLine);
+        return scanner.lowerLine;
 
+      },
+      down: () => {
+        scanner.lowerLine += 1;
+        canvas.drawHorizontalLine(scanner.lowerLine);
+        return scanner.lowerLine;
+
+      }
     }, {
 
       name: 'export',
       init: () => {
+        document.querySelector('#info').textContent = '';
       },
       leave: () => { }
     },
     {
       name: 'nextImage',
       init: () => {
+        document.querySelector('#info').textContent = data.imagePath;
       },
       leave: () => {
         data.getNextImage();
@@ -74,6 +129,9 @@ class FSM {
     console.log(`state=${this.state.name}, stateIdx=${this.stateIdx}, states=${this.states}`);
   }
 
+  /**
+   * go to next state and run init function
+   */
   next() {
     this.state.leave();
     this.stateIdx = (this.stateIdx + 1) % this.states.length;
@@ -81,6 +139,9 @@ class FSM {
     this.state.init();
   }
 
+  /**
+   * go to previous state and run init function
+   */
   previous() {
     this.state.leave();
     this.stateIdx -= 1;
@@ -115,32 +176,6 @@ class FSM {
 }
 
 export const fsm = new FSM();
-
-// ---------------- Script wrapper: ------------------
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // Midi.loadWebMidi();
-  // data.getNextImage();
-  console.log(data.values);
-
-  console.log(`dataHandler.values.length: ${data.values.length}`);
-  console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
-
-  canvas.drawHorizontalLine(scanner.upperLine);
-  canvas.drawHorizontalLine(scanner.lowerLine);
-
-  // await canvas.drawValueLine(data.values);
-  // scanner.moveRegion();
-  // canvas.animate();
-
-})
-
-addEventListener("keydown", onKeyDown);
-
-window.addEventListener('load', () => { // run when all code is fully loaded
-  console.log("openCV loaded!");
-  canvas.animate(); 
-});
 
 function loadOpenCv() {
 

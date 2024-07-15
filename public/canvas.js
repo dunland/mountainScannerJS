@@ -44,26 +44,11 @@ export class Canvas {
     animate() {
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
 
-        // read from canvas:
-        // let imgData = this.ctx.getImageData(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-        // console.assert(imgData, "no imgData", imgData);
-        // let src = cv.matFromImageData(imgData);
-        // let dst = new cv.Mat();
-        // // scale and shift are used to map the data to [0, 255].
-        // src.convertTo(dst, cv.CV_8U);
-        // // *** is GRAY, RGB, or RGBA, according to src.channels() is 1, 3 or 4.
-        // cv.cvtColor(dst, dst, cv.COLOR_RGB2RGBA);
-        // imgData = new ImageData(new Uint8ClampedArray(dst.data), dst.cols, dst.rows);
-
-        // this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-        // this.htmlCanvas.width = imgData.width;
-        // this.htmlCanvas.height = imgData.height;
-        // console.log(imgData.width, imgData.height, this.htmlCanvas.width, this.htmlCanvas.height, imgData);
-        // this.ctx.putImageData(imgData, 0, 0);
+        this.ctx.drawImage(data.imgElement, 0, 0);
 
         this.drawHorizontalLine(scanner.upperLine);
         this.drawHorizontalLine(scanner.lowerLine);
-        this.drawValueLine(data.values)
+        if (this.showData) this.drawValueLine(data.values);
         scanner.moveRegion()
         requestAnimationFrame(this.animate);
 

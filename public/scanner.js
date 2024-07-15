@@ -45,7 +45,7 @@ export class Scanner {
         // console.log(`value ${value} as midi: ${ 127 - (value/screenHeight * 127)}`);
         if (Midi.synth) {
             // console.log("broadcasting", valueAsMidi, value, position);
-            Midi.synth.sendControlChange(44, valueAsMidi);
+            Midi.synth.sendControlChange(Midi.cc, valueAsMidi);
         }
         // WebMidi.outputs[1].sendNoteOn(127 - (value/screenHeight * 127));
 
