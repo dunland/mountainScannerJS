@@ -12,26 +12,25 @@ export const canvas = new Canvas();
 document.addEventListener("DOMContentLoaded", async () => {
 
   Midi.loadWebMidi();
-  // data.getNextImage();
+  data.getNextImage();
   console.log(data.values);
 
   console.log(`dataHandler.values.length: ${data.values.length}`);
   console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
-
-  canvas.drawHorizontalLine(scanner.upperLine);
-  canvas.drawHorizontalLine(scanner.lowerLine);
-
-  // await canvas.drawValueLine(data.values);
-  // scanner.moveRegion();
-  // canvas.animate();
 
 })
 
 addEventListener("keydown", onKeyDown);
 
 window.addEventListener('load', () => { // run when all code is fully loaded
+
   console.log("openCV loaded!");
+  data.img = cv.imread(document.querySelector("#FullscreenImage"));
+  data.gray = new cv.Mat();
+  data.binary = new cv.Mat();
+
   canvas.animate();
+  // loadOpenCv();
 });
 
 class FSM {
@@ -44,29 +43,45 @@ class FSM {
       init: () => {
         document.querySelector('#info').textContent = "";
       },
-      leave: () => { }
+      leave: () => { },
+      up: () => {
+        data.upperThresh = (data.upperThresh + 1) % 255;
+        data.updateImageThreshold();
+      },
+      down: () => {
+        data.upperThresh -= 1;
+        if (data.upperThresh < 0) data.upperThresh = 255;
+        data.updateImageThreshold();
+      },
+      right: () => {
+        data.lowerThresh = (data.lowerThresh + 1) % 255;
+        data.updateImageThreshold();
+      },
+      left: () => {
+        data.lowerThresh -= 1;
+        if (data.lowerThresh < 0) data.lowerThresh = 255;
+        data.updateImageThreshold();
+      }
     },
     {
       name: 'midiCC',
       init: () => {
         document.querySelector('#info').textContent = Midi.cc;
-            },
+      },
       leave: () => { },
       up: () => {
         Midi.cc = (Midi.cc + 1) % 128;
         document.querySelector('#info').textContent = Midi.cc;
-        return Midi.cc;
       },
       down: () => {
         Midi.cc -= 1;
         if (Midi.cc < 0)
           Midi.cc = 127;
         document.querySelector('#info').textContent = Midi.cc;
-        return Midi.cc;
       },
     }, {
 
-      name: 'upperLine',
+      name: 'lines',
       init: () => {
         document.querySelector('#info').textContent = scanner.upperLine;
       },
@@ -74,32 +89,18 @@ class FSM {
       up: () => {
         scanner.upperLine -= 1;
         canvas.drawHorizontalLine(scanner.upperLine)
-        return scanner.upperLine;
       },
       down: () => {
         scanner.upperLine += 1;
         canvas.drawHorizontalLine(scanner.upperLine)
-        return scanner.upperLine;
-      }
-
-    }, {
-
-      name: 'lowerLine',
-      init: () => {
-        document.querySelector('#info').textContent = scanner.lowerLine;
       },
-      leave: () => { },
-      up: () => {
+      left: () => {
         scanner.lowerLine -= 1;
         canvas.drawHorizontalLine(scanner.lowerLine);
-        return scanner.lowerLine;
-
       },
-      down: () => {
+      right: () => {
         scanner.lowerLine += 1;
         canvas.drawHorizontalLine(scanner.lowerLine);
-        return scanner.lowerLine;
-
       }
     }, {
 
@@ -143,7 +144,6 @@ class FSM {
    * go to previous state and run init function
    */
   previous() {
-    this.state.leave();
     this.stateIdx -= 1;
     if (this.stateIdx < 0)
       this.stateIdx = this.states.length - 1;
@@ -185,9 +185,11 @@ function loadOpenCv() {
 
   let htmlCanvas = document.getElementById("canvas");
   let imgElement = document.querySelector("#FullscreenImage");
+  /*
   let ctx = htmlCanvas.getContext('2d');
   ctx.drawImage(imgElement, 0, 0);
   console.assert(ctx, "ctx is", ctx);
+
 
   // read from canvas:
   let imgData = ctx.getImageData(0, 0, htmlCanvas.width, htmlCanvas.height);
@@ -205,5 +207,16 @@ function loadOpenCv() {
   htmlCanvas.height = imgData.height;
   console.log(imgData.width, imgData.height, htmlCanvas.width, htmlCanvas.height, imgData);
   ctx.putImageData(imgData, 0, 0);
+
+  */
+
+  let img = cv.imread(imgElement);
+  let gray = new cv.Mat();
+  let binary = new cv.Mat();
+  cv.cvtColor(img, gray, cv.COLOR_RGBA2GRAY);
+  cv.threshold(gray, binary, 100, 200, cv.THRESH_BINARY);
+  console.assert(cv, "cv", cv);
+  cv.imshow('canvas', binary);
+  img.delete();
 
 }

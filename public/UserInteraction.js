@@ -1,4 +1,5 @@
 import { scanner, data, canvas, fsm } from "./fsm.js";
+import { Midi } from "./webMidi.js";
 
 export function onKeyDown(keyEvent) {
     switch (keyEvent.key) {
@@ -27,18 +28,27 @@ export function onKeyDown(keyEvent) {
 
         case 'ArrowUp':
             if (fsm.state.up)
-                document.querySelector('#info').textContent = fsm.state.up();
+                fsm.state.up();
             break;
 
         case 'ArrowDown':
             if (fsm.state.down)
-                document.querySelector('#info').textContent = fsm.state.down();
+                fsm.state.down();
+            break;
+        case 'ArrowLeft':
+            if (fsm.state.left)
+                fsm.state.left();
+            break;
+        case 'ArrowRight':
+            if (fsm.state.right)
+                fsm.state.right();
             break;
 
         default:
             console.log(keyEvent.key);
             break;
     }
+    updateInfo();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -63,7 +73,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-function updateInfo(variable){
-    console.log(window['Midi.cc']);
-    document.querySelector('#info').textContent = window['Midi.cc'];
+function updateInfo() {
+
+    let value = '';
+
+    switch (fsm.state.name) {
+        case "imgThreshold":
+            value = `${data.upperThresh} | ${data.lowerThresh}`
+            break;
+
+        case "midiCC":
+            value = Midi.cc;
+            break;
+
+        case "lines":
+            value = `${scanner.upperLine} | ${scanner.lowerLine}`
+            break;
+
+        case "export":
+            value = '';
+            break;
+
+        case "nextImage":
+            value = data.imagePath;
+            break;
+
+        default:
+            break;
+    }
+
+    document.querySelector('#info').textContent = value;
 }

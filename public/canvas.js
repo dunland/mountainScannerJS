@@ -1,4 +1,4 @@
-import { scanner, data } from "./fsm.js";
+import { scanner, data, fsm } from "./fsm.js";
 
 export class Canvas {
 
@@ -42,9 +42,14 @@ export class Canvas {
     }
 
     animate() {
+        if (data.imgData && fsm.state.name == 'imgThreshold'){
+            cv.imshow('canvas', data.imgData);
+            requestAnimationFrame(this.animate);
+            return
+        }
+        
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-
-        this.ctx.drawImage(data.imgElement, 0, 0);
+            this.ctx.drawImage(data.imgElement, 0, 0);
 
         this.drawHorizontalLine(scanner.upperLine);
         this.drawHorizontalLine(scanner.lowerLine);

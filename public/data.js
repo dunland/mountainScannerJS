@@ -10,10 +10,11 @@ export class Data {
     // this.cv = window.cv;
     // console.log(cv);
     this.imgElement = document.querySelector("#FullscreenImage");
-    this.mat;
-    this.gray;
+
+    this.img;
+    this.gray
     this.binary;
-    this.lowerThresh = 0, this.upperThresh = 255;
+    this.lowerThresh = 128, this.upperThresh = 255;
     this.inputFolder = 'public';
     this.outputFolder = 'public';
   }
@@ -113,4 +114,15 @@ export class Data {
         console.error('Error fetching valid files:', error);
       });
   }
+
+  updateImageThreshold() {
+
+    cv.cvtColor(this.img, this.gray, cv.COLOR_RGBA2GRAY);
+    cv.threshold(this.gray, this.binary, this.upperThresh, this.lowerThresh, cv.THRESH_BINARY);
+    this.imgData = this.binary;
+  }
+
+
+
+
 }
