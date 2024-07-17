@@ -7,14 +7,14 @@ export class Data {
   imagePath;
 
   constructor() {
-    // this.cv = window.cv;
-    // console.log(cv);
     this.imgElement = document.querySelector("#FullscreenImage");
 
     this.img;
     this.gray
     this.binary;
-    this.lowerThresh = 128, this.upperThresh = 255;
+    this.tempValues = []; // temporary array for black pixels for image processing -> will be written to values when leaving state "export"
+    this.lowerThresh = 255;
+    this.upperThresh = 66;
     this.inputFolder = 'public';
     this.outputFolder = 'public';
   }
@@ -47,6 +47,9 @@ export class Data {
       })
   }
 
+  /**
+   * remap values from 1080 px height to innerHeight
+   */
   remapInputValues() {
     for (let index = 0; index < this.rawValues.length; index++) {
       this.values[index] = Math.round(this.rawValues[index] / 1080 * innerHeight);
@@ -60,6 +63,10 @@ export class Data {
     }
   }
 
+  /**
+   * update json data of image and post to server
+   * @param {*} jsonData JSON object
+   */
   updateJsonData(jsonData) {
     console.log(jsonData);
     // Send JSON string to the server
@@ -96,19 +103,6 @@ export class Data {
         );
 
         await this.loadJSON(`silhouettes/${currentImageJson}`);
-
-        /*
-        // movingRegion.style.backgroundImage = currentImageData;
-        this.imgElement = document.getElementById('FullscreenImage');
-        this.imgElement.src = this.imagePath;
-
-        // read from canvas:
-        let imgData = ctx.getImageData(0, 0, htmlCanvas.width, htmlCanvas.height);
-        console.assert(imgData, "no imgData", imgData);
-        let src = cv.matFromImageData(imgData);
-        let dst = new cv.Mat();
-        */
-
       })
       .catch(error => {
         console.error('Error fetching valid files:', error);
@@ -122,7 +116,25 @@ export class Data {
     this.imgData = this.binary;
   }
 
+  // Function to process the image and export the JSON file
+  processImage() {
 
-
-
+    console.log("process");
+    if (!this.binary) return;
+    // Process the binary image and store the results in an array
+    this.tempValues = [];
+    for (let col = 0; col < this.binary.cols; col++) {
+      let foundBlack = false;
+      for (let row = 0; row < this.binary.rows; row++) {
+        if (this.binary.ucharPtr(row, col)[0] === 0) {
+          this.tempValues.push(row);
+          foundBlack = true;
+          break;
+        }
+      }
+      if (!foundBlack) {
+        this.tempValues.push(0);
+      }
+    }
+  }
 }

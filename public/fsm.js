@@ -29,6 +29,8 @@ window.addEventListener('load', () => { // run when all code is fully loaded
   data.gray = new cv.Mat();
   data.binary = new cv.Mat();
 
+  fsm.state.init();
+
   canvas.animate();
   // loadOpenCv();
 });
@@ -39,11 +41,15 @@ class FSM {
 
   states = [
     {
-      name: "imgThreshold",
+      name: "processImage",
       init: () => {
-        document.querySelector('#info').textContent = "";
+        document.querySelector('#info').textContent = `${data.upperThresh} | ${data.lowerThresh}`;
+        data.updateImageThreshold();
       },
-      leave: () => { },
+      leave: () => { 
+        data.values = data.tempValues;
+        // data.updateJsonData(data.values); // TODO: construct json Object
+       },
       up: () => {
         data.upperThresh = (data.upperThresh + 1) % 255;
         data.updateImageThreshold();
@@ -61,6 +67,9 @@ class FSM {
         data.lowerThresh -= 1;
         if (data.lowerThresh < 0) data.lowerThresh = 255;
         data.updateImageThreshold();
+      },
+      space: () => {
+        data.processImage();
       }
     },
     {
@@ -127,7 +136,7 @@ class FSM {
   state = this.states[this.stateIdx];
 
   constructor() {
-    console.log(`state=${this.state.name}, stateIdx=${this.stateIdx}, states=${this.states}`);
+    // console.log(`state=${this.state.name}, stateIdx=${this.stateIdx}, states=${this.states}`);
   }
 
   /**

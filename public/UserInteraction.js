@@ -44,6 +44,11 @@ export function onKeyDown(keyEvent) {
                 fsm.state.right();
             break;
 
+        case ' ':
+            if (fsm.state.space)
+                fsm.state.space();
+            break;
+
         default:
             console.log(keyEvent.key);
             break;
@@ -78,7 +83,7 @@ function updateInfo() {
     let value = '';
 
     switch (fsm.state.name) {
-        case "imgThreshold":
+        case "processImage":
             value = `${data.upperThresh} | ${data.lowerThresh}`
             break;
 

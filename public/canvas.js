@@ -42,14 +42,15 @@ export class Canvas {
     }
 
     animate() {
-        if (data.imgData && fsm.state.name == 'imgThreshold'){
+        if (data.imgData && fsm.state.name == 'processImage') {
             cv.imshow('canvas', data.imgData);
+            this.drawValueLine(data.tempValues);
             requestAnimationFrame(this.animate);
             return
         }
-        
+
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-            this.ctx.drawImage(data.imgElement, 0, 0);
+        this.ctx.drawImage(data.imgElement, 0, 0);
 
         this.drawHorizontalLine(scanner.upperLine);
         this.drawHorizontalLine(scanner.lowerLine);
