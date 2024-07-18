@@ -53,7 +53,7 @@ export function onKeyDown(keyEvent) {
             console.log(keyEvent.key);
             break;
     }
-    updateInfo();
+    fsm.updateInfo();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -77,35 +77,3 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(`navigation_${fsm.state.name}`).style.borderWidth = "3px";
 
 });
-
-function updateInfo() {
-
-    let value = '';
-
-    switch (fsm.state.name) {
-        case "processImage":
-            value = `${data.upperThresh} | ${data.lowerThresh}`
-            break;
-
-        case "midiCC":
-            value = Midi.cc;
-            break;
-
-        case "lines":
-            value = `${scanner.upperLine} | ${scanner.lowerLine}`
-            break;
-
-        case "export":
-            value = '';
-            break;
-
-        case "nextImage":
-            value = data.imagePath;
-            break;
-
-        default:
-            break;
-    }
-
-    document.querySelector('#info').textContent = value;
-}

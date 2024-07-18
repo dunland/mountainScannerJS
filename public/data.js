@@ -1,17 +1,19 @@
 import { canvas } from "./fsm.js";
 export class Data {
 
-  currentImageIndex = -1;
-  values = [];
-  rawValues = [];
-  imagePath;
-
   constructor() {
     this.imgElement = document.querySelector("#FullscreenImage");
-
+    
     this.img;
     this.gray
     this.binary;
+
+    this.silhouettes = []; // list of images on server. will be retrieved upon getNextImage()
+    this.values = [];
+    this.currentImageIndex = -1;
+    this.rawValues = [];
+    this.imagePath;
+    
     this.tempValues = []; // temporary array for black pixels for image processing -> will be written to values when leaving state "export"
     this.lowerThresh = 255;
     this.upperThresh = 66;
@@ -33,13 +35,14 @@ export class Data {
         console.log("get image", this.imagePath);
         if (jsonData.values.length > 0) {
           this.rawValues = jsonData.values;
-          console.log("rawValues:", this.rawValues);
+          // console.log("rawValues:", this.rawValues);
           this.remapInputValues();
         }
         else {
           this.createEmptyValues();
           jsonData.values = this.values;
-          this.updateJsonData(jsonData);
+          console.log(jsonData);
+          this.postJsonData(jsonData);
         }
       })
       .catch(error => {
@@ -54,7 +57,7 @@ export class Data {
     for (let index = 0; index < this.rawValues.length; index++) {
       this.values[index] = Math.round(this.rawValues[index] / 1080 * innerHeight);
     }
-    console.log('remapped:', this.values);
+    // console.log('remapped:', this.values);
   }
 
   createEmptyValues() {
@@ -64,11 +67,25 @@ export class Data {
   }
 
   /**
+   * returns a json object with imagePath and values as required for silhouettes
+   */
+  composeJson(){
+    console.log(this.imagePath);
+    const jsonData = {
+      "imagePath" : this.imagePath.split("/")[1], // get rid of 'silhouettes/'
+      "values": this.values
+      // TODO upperLine, lowerLine
+    }
+    return jsonData;
+  }
+
+  /**
    * update json data of image and post to server
    * @param {*} jsonData JSON object
    */
-  updateJsonData(jsonData) {
-    console.log(jsonData);
+  postJsonData(jsonData) {
+    // console.log(jsonData);
+    // console.log(JSON.stringify(jsonData));
     // Send JSON string to the server
     fetch('upload', {
       method: 'POST',
@@ -92,17 +109,18 @@ export class Data {
       .then(async (silhouettes) => {
         // Use the list of valid file paths here
         this.currentImageIndex = (this.currentImageIndex + 1) % silhouettes.length;
-        console.log(silhouettes);
+        this.silhouettes = silhouettes;
+        console.log(this.silhouettes);
         let currentImageFile = silhouettes[this.currentImageIndex];
-        let currentImageJson = `${currentImageFile.split(".")[0]}.json`
+        let currentImageJsonFile = `${currentImageFile.split(".")[0]}.json`
         console.log(
           `this.currentImageIndex:${this.currentImageIndex},
            silhouettes: ${silhouettes},
            currentImageFile: ${currentImageFile},
-           currentImageJson: ${currentImageJson}`
+           currentImageJson: ${currentImageJsonFile}`
         );
 
-        await this.loadJSON(`silhouettes/${currentImageJson}`);
+        await this.loadJSON(`silhouettes/${currentImageJsonFile}`);
       })
       .catch(error => {
         console.error('Error fetching valid files:', error);

@@ -46,10 +46,9 @@ class FSM {
         document.querySelector('#info').textContent = `${data.upperThresh} | ${data.lowerThresh}`;
         data.updateImageThreshold();
       },
-      leave: () => { 
+      leave: () => {
         data.values = data.tempValues;
-        // data.updateJsonData(data.values); // TODO: construct json Object
-       },
+      },
       up: () => {
         data.upperThresh = (data.upperThresh + 1) % 255;
         data.updateImageThreshold();
@@ -115,14 +114,15 @@ class FSM {
 
       name: 'export',
       init: () => {
-        document.querySelector('#info').textContent = '';
+        document.querySelector('#info').textContent = data.imagePath;
       },
-      leave: () => { }
+      leave: () => {
+        data.postJsonData(data.composeJson());
+      }
     },
     {
       name: 'nextImage',
       init: () => {
-        document.querySelector('#info').textContent = data.imagePath;
       },
       leave: () => {
         data.getNextImage();
@@ -147,6 +147,7 @@ class FSM {
     this.stateIdx = (this.stateIdx + 1) % this.states.length;
     this.setState(this.states[this.stateIdx]);
     this.state.init();
+    
   }
 
   /**
@@ -182,50 +183,40 @@ class FSM {
     // set border thickness of current:
     document.getElementById(`navigation_${newState.name}`).style.borderWidth = "3px";
   }
+
+
+updateInfo() {
+
+  let value = '';
+
+  switch (this.state.name) {
+      case "processImage":
+          value = `${data.upperThresh} | ${data.lowerThresh}`
+          break;
+
+      case "midiCC":
+          value = Midi.cc;
+          break;
+
+      case "lines":
+          value = `${scanner.upperLine} | ${scanner.lowerLine}`
+          break;
+
+      case "export":
+          value = `${data.imagePath.split(".")[0]}.json`;
+          break;
+
+      case "nextImage":
+          value = document.querySelector('#info').textContent = `>>> ${data.silhouettes[(data.currentImageIndex + 1) % data.silhouettes.length]}`;
+          ;
+          break;
+
+      default:
+          break;
+  }
+
+  document.querySelector('#info').textContent = value;
+}
 }
 
 export const fsm = new FSM();
-
-function loadOpenCv() {
-
-  console.log("openCV loaded!");
-
-  console.assert(cv, "cv is", cv);
-
-  let htmlCanvas = document.getElementById("canvas");
-  let imgElement = document.querySelector("#FullscreenImage");
-  /*
-  let ctx = htmlCanvas.getContext('2d');
-  ctx.drawImage(imgElement, 0, 0);
-  console.assert(ctx, "ctx is", ctx);
-
-
-  // read from canvas:
-  let imgData = ctx.getImageData(0, 0, htmlCanvas.width, htmlCanvas.height);
-  console.assert(imgData, "no imgData", imgData);
-  let src = cv.matFromImageData(imgData);
-  let dst = new cv.Mat();
-  // scale and shift are used to map the data to [0, 255].
-  src.convertTo(dst, cv.CV_8U);
-  // *** is GRAY, RGB, or RGBA, according to src.channels() is 1, 3 or 4.
-  cv.cvtColor(dst, dst, cv.COLOR_RGB2RGBA);
-  imgData = new ImageData(new Uint8ClampedArray(dst.data), dst.cols, dst.rows);
-
-  ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height);
-  htmlCanvas.width = imgData.width;
-  htmlCanvas.height = imgData.height;
-  console.log(imgData.width, imgData.height, htmlCanvas.width, htmlCanvas.height, imgData);
-  ctx.putImageData(imgData, 0, 0);
-
-  */
-
-  let img = cv.imread(imgElement);
-  let gray = new cv.Mat();
-  let binary = new cv.Mat();
-  cv.cvtColor(img, gray, cv.COLOR_RGBA2GRAY);
-  cv.threshold(gray, binary, 100, 200, cv.THRESH_BINARY);
-  console.assert(cv, "cv", cv);
-  cv.imshow('canvas', binary);
-  img.delete();
-
-}
