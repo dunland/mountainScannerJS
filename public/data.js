@@ -3,7 +3,7 @@ export class Data {
 
   constructor() {
     this.imgElement = document.querySelector("#FullscreenImage");
-    
+
     this.img;
     this.gray
     this.binary;
@@ -13,7 +13,7 @@ export class Data {
     this.currentImageIndex = -1;
     this.rawValues = [];
     this.imagePath;
-    
+
     this.tempValues = []; // temporary array for black pixels for image processing -> will be written to values when leaving state "export"
     this.lowerThresh = 255;
     this.upperThresh = 66;
@@ -22,7 +22,7 @@ export class Data {
   }
 
   /**
-   * 
+   * read the data from image json
    * @param {string} dataFile url to json file 
    */
   async loadJSON(dataFile) {
@@ -69,10 +69,10 @@ export class Data {
   /**
    * returns a json object with imagePath and values as required for silhouettes
    */
-  composeJson(){
+  composeJson() {
     console.log(this.imagePath);
     const jsonData = {
-      "imagePath" : this.imagePath.split("/")[1], // get rid of 'silhouettes/'
+      "imagePath": this.imagePath.split("/")[1], // get rid of 'silhouettes/'
       "values": this.values
       // TODO upperLine, lowerLine
     }
@@ -103,28 +103,31 @@ export class Data {
       });
   }
 
-  async getNextImage() {
+  async fetchSilhouettes() {
     fetch('/silhouettes')
       .then(response => response.json())
       .then(async (silhouettes) => {
-        // Use the list of valid file paths here
-        this.currentImageIndex = (this.currentImageIndex + 1) % silhouettes.length;
         this.silhouettes = silhouettes;
         console.log(this.silhouettes);
-        let currentImageFile = silhouettes[this.currentImageIndex];
-        let currentImageJsonFile = `${currentImageFile.split(".")[0]}.json`
-        console.log(
-          `this.currentImageIndex:${this.currentImageIndex},
-           silhouettes: ${silhouettes},
-           currentImageFile: ${currentImageFile},
-           currentImageJson: ${currentImageJsonFile}`
-        );
-
-        await this.loadJSON(`silhouettes/${currentImageJsonFile}`);
       })
       .catch(error => {
         console.error('Error fetching valid files:', error);
       });
+
+  }
+
+  async getNextImage() {
+    // Use the list of valid file paths here
+    this.currentImageIndex = (this.currentImageIndex + 1) % this.silhouettes.length;
+    let currentImageFile = this.silhouettes[this.currentImageIndex];
+    let currentImageJsonFile = `${currentImageFile.split(".")[0]}.json`
+    console.log(
+      `this.currentImageIndex:${this.currentImageIndex},
+           currentImageFile: ${currentImageFile},
+           currentImageJson: ${currentImageJsonFile}`
+    );
+
+    await this.loadJSON(`silhouettes/${currentImageJsonFile}`);
   }
 
   updateImageThreshold() {

@@ -12,7 +12,7 @@ export const canvas = new Canvas();
 document.addEventListener("DOMContentLoaded", async () => {
 
   Midi.loadWebMidi();
-  data.getNextImage();
+  await data.fetchSilhouettes();
   console.log(data.values);
 
   console.log(`dataHandler.values.length: ${data.values.length}`);
@@ -28,6 +28,8 @@ window.addEventListener('load', () => { // run when all code is fully loaded
   data.img = cv.imread(document.querySelector("#FullscreenImage"));
   data.gray = new cv.Mat();
   data.binary = new cv.Mat();
+
+  data.getNextImage();
 
   fsm.state.init();
 
