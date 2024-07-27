@@ -3,31 +3,24 @@ var fs = require('fs');
 var path = require('path');
 var express = require('express'); // needed to serve files
 var app = express();
-
+const devtools = require('./Devtools.js');
 var dir = path.join(__dirname, 'public');
 
 app.use(express.static(dir)); // serve static files
 app.use(express.json()); // Middleware to parse JSON bodies
 
-const silhouettes = [];
+var silhouettes = [];
 fs.readdir(dir + "/silhouettes", (err, files) => {
   // Iterate through each image file in the directory
   files.forEach(file => {
 
-    // const ending = file.split(".")[1];
-    // if (ending == 'json') {
-    //   silhouettes.push(file); // Store the json in the list
-    // }
-
-    // Check if both image and .json exist in the directory:
-
-    const validFileEndings = ['jpg', 'png'];
+    const validFileEndings = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'];
     const baseName = file.split(".")[0];
     const ending = file.split(".")[1];
     if (validFileEndings.includes(ending)) {
       silhouettes.push(file);
 
-      // create json, if not existent:
+      // create json for image, if not existent:
       if (!fs.existsSync(`${dir}/silhouettes/${baseName}.json`)) {
         let jsonObj = `{"imagePath":"${file}", "values":[]}`;
         fs.writeFile(`${dir}/silhouettes/${baseName}.json`, jsonObj, 'utf-8', (err) => {
@@ -40,6 +33,7 @@ fs.readdir(dir + "/silhouettes", (err, files) => {
     }
 
   });
+  silhouettes = devtools.shuffle(silhouettes);
   console.log("silhouettes:", silhouettes);
 });
 
