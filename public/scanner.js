@@ -9,7 +9,7 @@ export class Scanner {
     constructor() {
 
         this.centerX = 0; // center of movingRegion
-        this.moveSpeed = 2;
+        this.moveSpeed = 1;
         this.position = 0;
         this.regionWidth = 20;
 
@@ -49,10 +49,13 @@ export class Scanner {
         }
         // WebMidi.outputs[1].sendNoteOn(127 - (value/screenHeight * 127));
 
-        const movingRegion = document.querySelector('#movingRegion');
-        movingRegion.style.left = this.position + 'px';
-        let xpos = screenWidth - this.position;
-        movingRegion.style.backgroundPosition = `${xpos + this.displacement}px 0px`;
+        // move inverted image:
+        if (false){
+            const movingRegion = document.querySelector('#movingRegion');
+            movingRegion.style.left = this.position + 'px';
+            let xpos = screenWidth - this.position;
+            movingRegion.style.backgroundPosition = `${xpos + this.displacement}px 0px`;
+        }
     }
 
     displayValue(x, y, index) {

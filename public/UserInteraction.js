@@ -15,6 +15,7 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Enter':
+            fsm.state.actuate();
             fsm.next();
             break;
 
@@ -23,7 +24,7 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Tab':
-            fsm.skip();
+            fsm.next();
             break;
 
         case 'ArrowUp':

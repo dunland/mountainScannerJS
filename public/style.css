@@ -45,10 +45,10 @@ html {
     color: white;
     text-shadow:
         1px 1px 2px black,
-        0 0 1em #FC0,
-        0 0 0.2em #FC0;
+        0 0 1em black,
+        0 0 0.2em black;
     border: 1px solid white;
-    box-shadow: 1px 1px 1px #FC0;
+    box-shadow: 1px 1px 1px black;
     padding: 4px 8px 4px 8px;
     margin: 4px;
 }
@@ -57,8 +57,8 @@ html {
     color: white;
     text-shadow:
         1px 1px 2px black,
-        0 0 1em #FC0,
-        0 0 0.2em #FC0;
+        0 0 1em black,
+        0 0 0.2em black;
     position: relative;
     top: 10px;
 }

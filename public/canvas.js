@@ -41,10 +41,20 @@ export class Canvas {
         this.ctx.stroke();
     }
 
+    drawVerticalLine(xPos){
+        this.ctx.strokeStyle = "red";
+        this.ctx.beginPath();
+        this.ctx.moveTo(xPos, 0);
+        this.ctx.lineTo(xPos, this.fullscreenImage.height);
+        this.ctx.stroke();
+    }
+
     animate() {
         if (data.imgData && fsm.state.name == 'processImage') {
             cv.imshow('canvas', data.imgData);
             this.drawValueLine(data.tempValues);
+            this.drawHorizontalLine(scanner.upperLine);
+            this.drawHorizontalLine(scanner.lowerLine);    
             requestAnimationFrame(this.animate);
             return
         }
@@ -54,6 +64,7 @@ export class Canvas {
 
         this.drawHorizontalLine(scanner.upperLine);
         this.drawHorizontalLine(scanner.lowerLine);
+        this.drawVerticalLine(scanner.position);
         if (this.showData) this.drawValueLine(data.values);
         scanner.moveRegion()
         requestAnimationFrame(this.animate);
