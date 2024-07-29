@@ -30,6 +30,20 @@
 - Beim erstmaligen Laden dieses Arrays werden alle Werte auf `canvas.height / 2` gesetzt
 
 ## Log
+
+28.07.2024
+- **Problem: `cv.imread` funktioniert nur mit Bild aus DOM -> Alternative Bild aus ctx laden!**
+
+27.07.2024
+- [ ] getNextImage lädt Bild nicht ? 
+- [ ] Resize image: `cv.resize`
+
+**image loading**:
+1. getNextImage (fetch silhouettes)
+  1. data.currentImageIndex++
+  2. update data.imgElement.src
+  3. 
+
 18.07.2024
 - [x] leave state "export" -> create jsonObject and POST to server
 17.07.2024

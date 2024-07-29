@@ -29,6 +29,9 @@ export class Canvas {
         this.ctx.stroke();
     }
 
+    /**
+     * simple function to just clear the canvas by drawing a white rectangle
+     */
     clearCanvas() {
         this.htmlCanvas.getContext("2d").clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
     }
@@ -50,8 +53,12 @@ export class Canvas {
     }
 
     animate() {
-        if (data.imgData && fsm.state.name == 'processImage') {
-            cv.imshow('canvas', data.imgData);
+        if (fsm.state.name == 'processImage') {
+            if (!data.binary){
+                console.assert(data.binary, "data.binary", data.binary);
+                return
+            }
+            cv.imshow('canvas', data.binary);
             this.drawValueLine(data.tempValues);
             this.drawHorizontalLine(scanner.upperLine);
             this.drawHorizontalLine(scanner.lowerLine);    
@@ -60,7 +67,7 @@ export class Canvas {
         }
 
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-        this.ctx.drawImage(data.imgElement, 0, 0);
+        this.ctx.drawImage(data.fullScreenImage, 0, 0);
 
         this.drawHorizontalLine(scanner.upperLine);
         this.drawHorizontalLine(scanner.lowerLine);

@@ -2,7 +2,7 @@ import { canvas } from "./fsm.js";
 export class Data {
 
   constructor() {
-    this.imgElement = document.querySelector("#FullscreenImage");
+    this.fullScreenImage;
 
     this.img;
     this.gray
@@ -46,7 +46,7 @@ export class Data {
         }
       })
       .catch(error => {
-        console.error("Error loading ./data.json! (Maybe try a different browser)", error);
+        console.error("Error loading .json! (Maybe try a different browser)", error);
       })
   }
 
@@ -141,6 +141,7 @@ export class Data {
   processImage() {
 
     console.log("process");
+    console.assert(this.binary, "this.binary", this.binary);
     if (!this.binary) return;
     // Process the binary image and store the results in an array
     this.tempValues = [];

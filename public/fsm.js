@@ -25,7 +25,7 @@ addEventListener("keydown", onKeyDown);
 window.addEventListener('load', () => { // run when all code is fully loaded
 
   console.log("openCV loaded!");
-  data.img = cv.imread(document.querySelector("#FullscreenImage"));
+  data.fullScreenImage = document.querySelector("#FullscreenImage");
   data.gray = new cv.Mat();
   data.binary = new cv.Mat();
 
@@ -34,7 +34,6 @@ window.addEventListener('load', () => { // run when all code is fully loaded
   fsm.state.init();
 
   canvas.animate();
-  // loadOpenCv();
 });
 
 class FSM {
@@ -48,7 +47,8 @@ class FSM {
         document.querySelector('#info').textContent = `${data.upperThresh} | ${data.lowerThresh}`;
         data.updateImageThreshold();
       },
-      leave: () => {
+      actuate: () => {
+        data.processImage();
         data.values = data.tempValues;
       },
       up: () => {
@@ -69,16 +69,13 @@ class FSM {
         if (data.lowerThresh < 0) data.lowerThresh = 255;
         data.updateImageThreshold();
       },
-      space: () => {
-        data.processImage();
-      }
     },
     {
       name: 'midiCC',
       init: () => {
         document.querySelector('#info').textContent = Midi.cc;
       },
-      leave: () => { },
+      actuate: () => { },
       up: () => {
         Midi.cc = (Midi.cc + 1) % 128;
         document.querySelector('#info').textContent = Midi.cc;
@@ -95,7 +92,7 @@ class FSM {
       init: () => {
         document.querySelector('#info').textContent = scanner.upperLine;
       },
-      leave: () => { },
+      actuate: () => { },
       up: () => {
         scanner.upperLine -= 1;
         canvas.drawHorizontalLine(scanner.upperLine)
@@ -118,7 +115,7 @@ class FSM {
       init: () => {
         document.querySelector('#info').textContent = data.imagePath;
       },
-      leave: () => {
+      actuate: () => {
         data.postJsonData(data.composeJson());
       }
     },
@@ -126,7 +123,7 @@ class FSM {
       name: 'nextImage',
       init: () => {
       },
-      leave: () => {
+      actuate: () => {
         data.getNextImage();
         canvas.clearCanvas();
         if (canvas.showData) canvas.drawValueLine(data.values);
@@ -145,7 +142,6 @@ class FSM {
    * go to next state and run init function
    */
   next() {
-    this.state.leave();
     this.stateIdx = (this.stateIdx + 1) % this.states.length;
     this.setState(this.states[this.stateIdx]);
     this.state.init();
@@ -159,15 +155,6 @@ class FSM {
     this.stateIdx -= 1;
     if (this.stateIdx < 0)
       this.stateIdx = this.states.length - 1;
-    this.setState(this.states[this.stateIdx]);
-    this.state.init();
-  }
-
-  /**
-   * go to next state without calling leave()
-   */
-  skip() {
-    this.stateIdx = (this.stateIdx + 1) % this.states.length;
     this.setState(this.states[this.stateIdx]);
     this.state.init();
   }
