@@ -13,9 +13,6 @@ export class Scanner {
         this.position = 0;
         this.regionWidth = 20;
 
-        this.fullscreenImage = document.getElementById("FullscreenImage");
-        this.displacement = this.fullscreenImage.width - innerWidth;
-
         this.upperLine = Math.floor(window.innerHeight / 3);
         this.lowerLine = Math.floor(window.innerHeight * 2 / 3);
     }
@@ -36,7 +33,7 @@ export class Scanner {
             this.position = screenWidth;
         }
 
-        const index = Math.floor((this.centerX / this.fullscreenImage.width) * data.values.length);
+        const index = Math.floor((this.centerX / data.fullScreenImage.width) * data.values.length);
         // console.log(index);
         var value = data.values[index];
         const valueAsMidi = Math.max(Math.floor(127 - (value / screenHeight * 127)), 0);

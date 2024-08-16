@@ -2,21 +2,22 @@ import { scanner, data, fsm } from "./fsm.js";
 
 export class Canvas {
 
-    showData = true;
+    showData = true; // toggle using 'v'
     constructor() {
 
         this.htmlCanvas = document.getElementById("canvas");
         this.fullscreenImage = document.getElementById("FullscreenImage");
         this.ctx = this.htmlCanvas.getContext("2d");
 
-        this.htmlCanvas.width = this.fullscreenImage.width;
+        this.htmlCanvas.width = innerWidth;
         this.htmlCanvas.height = innerHeight;
 
         this.animate = this.animate.bind(this); // when a function is called as a callback (such as in requestAnimationFrame), the context (this) is lost unless explicitly bound.
 
     }
 
-    async drawValueLine(values) {
+    drawValueLine(values) {
+
         // console.log("Drawing red data line to canvas.height:", this.htmlCanvas.height, "canvas.width:", this.htmlCanvas.width);
         this.ctx.strokeStyle = "red";
         this.ctx.beginPath();
@@ -24,7 +25,7 @@ export class Canvas {
 
         for (let index = 0; index < values.length; index++) {
             const value = values[index];
-            this.ctx.lineTo(Math.floor(index / values.length * this.fullscreenImage.width), value, 1, 1);
+            this.ctx.lineTo(Math.floor(index / values.length * data.fullScreenImage.width), value, 1, 1);
         }
         this.ctx.stroke();
     }
@@ -40,7 +41,7 @@ export class Canvas {
         this.ctx.strokeStyle = "red";
         this.ctx.beginPath();
         this.ctx.moveTo(0, yPos);
-        this.ctx.lineTo(this.fullscreenImage.width, yPos);
+        this.ctx.lineTo(data.fullScreenImage.width, yPos);
         this.ctx.stroke();
     }
 
@@ -48,7 +49,7 @@ export class Canvas {
         this.ctx.strokeStyle = "red";
         this.ctx.beginPath();
         this.ctx.moveTo(xPos, 0);
-        this.ctx.lineTo(xPos, this.fullscreenImage.height);
+        this.ctx.lineTo(xPos, data.fullScreenImage.height);
         this.ctx.stroke();
     }
 
@@ -68,13 +69,13 @@ export class Canvas {
 
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
         this.ctx.drawImage(data.fullScreenImage, 0, 0);
+        // cv.imshow('canvas', data.img)
 
+        scanner.moveRegion();
         this.drawHorizontalLine(scanner.upperLine);
         this.drawHorizontalLine(scanner.lowerLine);
-        this.drawVerticalLine(scanner.position);
+        this.drawVerticalLine(scanner.centerX);
         if (this.showData) this.drawValueLine(data.values);
-        scanner.moveRegion()
         requestAnimationFrame(this.animate);
-
     }
 }

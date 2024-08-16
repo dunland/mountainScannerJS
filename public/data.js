@@ -9,6 +9,7 @@ export class Data {
     this.binary;
 
     this.silhouettes = []; // list of images on server. will be retrieved upon getNextImage()
+    this.silhouettesElements = []; // list of DOM silhouette image elements
     this.values = [];
     this.currentImageIndex = -1;
     this.rawValues = [];
@@ -103,29 +104,46 @@ export class Data {
       });
   }
 
+  /**
+   * get list of files stored in public/silhouettes and store it in silhouettesElements
+   */
   async fetchSilhouettes() {
-    fetch('/silhouettes')
-      .then(response => response.json())
-      .then(async (silhouettes) => {
-        this.silhouettes = silhouettes;
-        console.log(this.silhouettes);
-      })
-      .catch(error => {
-        console.error('Error fetching valid files:', error);
-      });
-
+    try {
+      const response = await fetch('/silhouettes');
+      const silhouettes = await response.json();
+      this.silhouettes = silhouettes;
+      // console.log('this.silhouettes:', this.silhouettes);
+      for (let index = 0; index < this.silhouettes.length; index++) {
+          const img = document.createElement("img");
+          img.src = `silhouettes/${this.silhouettes[index]}`;
+          document.body.append(img);
+          this.silhouettesElements.push(img);
+      }
+  } catch (error) {
+      console.error('Error fetching valid files:', error);
+  }
+  console.log('silhouettesElements:', this.silhouettesElements);
   }
 
   async getNextImage() {
     // Use the list of valid file paths here
+    // increment image list index
     this.currentImageIndex = (this.currentImageIndex + 1) % this.silhouettes.length;
     let currentImageFile = this.silhouettes[this.currentImageIndex];
+
+    console.log(this.currentImageIndex, currentImageFile, this.silhouettes);
+    
+    // get json
     let currentImageJsonFile = `${currentImageFile.split(".")[0]}.json`
     console.log(
       `this.currentImageIndex:${this.currentImageIndex},
            currentImageFile: ${currentImageFile},
            currentImageJson: ${currentImageJsonFile}`
     );
+
+    // read image from html elements:
+    this.img = cv.imread(this.silhouettesElements[this.currentImageIndex]);
+    this.fullScreenImage = this.silhouettesElements[this.currentImageIndex];
 
     await this.loadJSON(`silhouettes/${currentImageJsonFile}`);
   }
@@ -134,10 +152,11 @@ export class Data {
 
     cv.cvtColor(this.img, this.gray, cv.COLOR_RGBA2GRAY);
     cv.threshold(this.gray, this.binary, this.upperThresh, this.lowerThresh, cv.THRESH_BINARY);
-    this.imgData = this.binary;
   }
 
-  // Function to process the image and export the JSON file
+  /**
+   * Function to process the image and export the JSON file
+   */
   processImage() {
 
     console.log("process");
@@ -158,5 +177,6 @@ export class Data {
         this.tempValues.push(0);
       }
     }
+    this.values = this.tempValues;
   }
 }
