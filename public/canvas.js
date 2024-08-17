@@ -6,7 +6,6 @@ export class Canvas {
     constructor() {
 
         this.htmlCanvas = document.getElementById("canvas");
-        this.fullscreenImage = document.getElementById("FullscreenImage");
         this.ctx = this.htmlCanvas.getContext("2d");
 
         this.htmlCanvas.width = innerWidth;
@@ -59,10 +58,11 @@ export class Canvas {
                 console.assert(data.binary, "data.binary", data.binary);
                 return
             }
+            this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
             cv.imshow('canvas', data.binary);
-            this.drawValueLine(data.tempValues);
-            this.drawHorizontalLine(scanner.upperLine);
-            this.drawHorizontalLine(scanner.lowerLine);    
+            this.drawValueLine(data.values);
+            // this.drawHorizontalLine(scanner.upperLine);
+            // this.drawHorizontalLine(scanner.lowerLine);    
             requestAnimationFrame(this.animate);
             return
         }
@@ -72,8 +72,8 @@ export class Canvas {
         // cv.imshow('canvas', data.img)
 
         scanner.moveRegion();
-        this.drawHorizontalLine(scanner.upperLine);
-        this.drawHorizontalLine(scanner.lowerLine);
+        // this.drawHorizontalLine(scanner.upperLine);
+        // this.drawHorizontalLine(scanner.lowerLine);
         this.drawVerticalLine(scanner.centerX);
         if (this.showData) this.drawValueLine(data.values);
         requestAnimationFrame(this.animate);

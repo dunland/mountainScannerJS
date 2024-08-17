@@ -37,7 +37,7 @@ export class Scanner {
         // console.log(index);
         var value = data.values[index];
         const valueAsMidi = Math.max(Math.floor(127 - (value / screenHeight * 127)), 0);
-        this.displayValue(this.centerX, value, index);
+        this.displayValue(this.position, value, index);
 
         // console.log(`value ${value} as midi: ${ 127 - (value/screenHeight * 127)}`);
         if (Midi.synth) {

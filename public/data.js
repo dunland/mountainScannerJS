@@ -35,9 +35,9 @@ export class Data {
         this.imagePath = `silhouettes/${jsonData.imagePath}`;
         console.log("get image", this.imagePath);
         if (jsonData.values.length > 0) {
-          this.rawValues = jsonData.values;
+          this.values = jsonData.values;
           // console.log("rawValues:", this.rawValues);
-          this.remapInputValues();
+          // this.values = this.remapInputValues(jsonData.values, 1080);
         }
         else {
           this.createEmptyValues();
@@ -54,10 +54,13 @@ export class Data {
   /**
    * remap values from 1080 px height to innerHeight
    */
-  remapInputValues() {
-    for (let index = 0; index < this.rawValues.length; index++) {
-      this.values[index] = Math.round(this.rawValues[index] / 1080 * innerHeight);
+  remapInputValues(rawValues, height) {
+    const mappedValues = [];
+    for (let index = 0; index < rawValues.length; index++) {
+      mappedValues[index] = Math.round(rawValues[index] / height * innerHeight);
     }
+
+    return mappedValues;
     // console.log('remapped:', this.values);
   }
 
@@ -118,6 +121,7 @@ export class Data {
           img.src = `silhouettes/${this.silhouettes[index]}`;
           document.body.append(img);
           this.silhouettesElements.push(img);
+          this.silhouettesElements[this.silhouettesElements.length - 1].style.display = 'None';
       }
   } catch (error) {
       console.error('Error fetching valid files:', error);
