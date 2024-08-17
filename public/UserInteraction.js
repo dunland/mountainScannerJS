@@ -75,6 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
     newDiv.textContent = 'info';
     document.querySelector("#navigation").appendChild(newDiv);
 
-    document.getElementById(`navigation_${fsm.state.name}`).style.borderWidth = "3px";
+    document.getElementById(`navigation_${fsm.state.name}`).classList.add('active');
 
 });

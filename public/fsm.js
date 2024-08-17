@@ -161,16 +161,15 @@ class FSM {
 
   setState(newState) {
     console.log(newState.name);
-    // set border thickness of all to 1
-    for (let icon of document.getElementsByClassName('navigationIcon')) {
-      icon.style.borderWidth = "1px";
-    }
+
+    // deactivate current state / set border thickness of lastState:
+    document.getElementById(`navigation_${this.state.name}`).classList.remove('active');
 
     // set state
     this.state = newState;
 
     // set border thickness of current:
-    document.getElementById(`navigation_${newState.name}`).style.borderWidth = "3px";
+    document.getElementById(`navigation_${newState.name}`).classList.add('active');
   }
 
 
