@@ -13,9 +13,11 @@
 - **data preprocessing:**
 - [ ] invert image
 - **functions**:
+- [ ] create a line per image
 - [ ] multiple lines per image for different thresholds
 - **usability**:
 - [ ] only enter "processImage" upon special key
+- [ ] navigation using arrow keys and sub-menus
 - [ ] nanoKontrol
 - [ ] change data x when resizing image
 - [ ] hide mouse when fullscreen application
@@ -30,6 +32,13 @@
 - Beim erstmaligen Laden dieses Arrays werden alle Werte auf `canvas.height / 2` gesetzt
 
 ## Log
+
+30.07.2024
+fsm: opencvloaded:
+1. await data.fetchSilhouettes
+  1. `document.body.append(img)` ✓
+  2. `this.silhouettesElements.push(img)`
+2. await data.getNextImage
 
 28.07.2024
 - **Problem: `cv.imread` funktioniert nur mit Bild aus DOM -> Alternative Bild aus ctx laden!**
