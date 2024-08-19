@@ -15,7 +15,6 @@
 - **usability**:
 - [ ] switch scanners using TAB
 - [ ] scanners have different colors - active scanner with inverted image?
-- [ ] only enter "processImage" upon space bar
 - [ ] nanoKontrol
 - [ ] change data x when resizing image
 - [ ] hide mouse when fullscreen application
@@ -31,6 +30,8 @@
 - Beim erstmaligen Laden dieses Arrays werden alle Werte auf `canvas.height / 2` gesetzt
 
 ## Log
+19.08.2024
+- [x] only enter "processImage" upon space bar
 
 30.07.2024
 fsm: opencvloaded:

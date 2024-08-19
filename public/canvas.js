@@ -44,7 +44,7 @@ export class Canvas {
         this.ctx.stroke();
     }
 
-    drawVerticalLine(xPos){
+    drawVerticalLine(xPos) {
         this.ctx.strokeStyle = "red";
         this.ctx.beginPath();
         this.ctx.moveTo(xPos, 0);
@@ -53,8 +53,8 @@ export class Canvas {
     }
 
     animate() {
-        if (fsm.state.name == 'processImage') {
-            if (!data.binary){
+        if (fsm.processingModeOn) {
+            if (!data.binary) {
                 console.assert(data.binary, "data.binary", data.binary);
                 return
             }
@@ -70,11 +70,11 @@ export class Canvas {
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
         this.ctx.drawImage(data.fullScreenImage, 0, 0);
         // cv.imshow('canvas', data.img)
-        
+
         // this.drawHorizontalLine(scanner.upperLine);
         // this.drawHorizontalLine(scanner.lowerLine);
         for (let index = 0; index < data.activeScanners.length; index++) {
-            const scanner = data.activeScanners[index];            
+            const scanner = data.activeScanners[index];
             scanner.moveRegion();
             this.drawVerticalLine(scanner.centerX);
             if (this.showData) this.drawValueLine(scanner.values);

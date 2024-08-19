@@ -37,35 +37,51 @@ class FSM {
 
   stateIdx = 0;
   currentScanner;
+  processingModeOn = false;
 
   states = [
     {
       name: "processImage",
       init: () => {
         document.querySelector('#info').textContent = `${data.upperThresh} | ${data.lowerThresh}`;
-        data.updateImageThreshold();
+        // data.updateImageThreshold();
+        this.processingModeOn = false;
+      },
+      space: () => {
+        this.processingModeOn = !this.processingModeOn;
+        if (this.processingModeOn) data.updateImageThreshold();
       },
       enter: () => {
-        data.processImage();
-        this.currentScanner.values = data.tempValues;
+        if (this.processingModeOn) {
+          data.processImage();
+          this.currentScanner.values = data.tempValues;
+        }
       },
       up: () => {
-        data.upperThresh = (data.upperThresh + 1) % 255;
-        data.updateImageThreshold();
+        if (this.processingModeOn) {
+          data.upperThresh = (data.upperThresh + 1) % 255;
+          data.updateImageThreshold();
+        }
       },
       down: () => {
-        data.upperThresh -= 1;
-        if (data.upperThresh < 0) data.upperThresh = 255;
-        data.updateImageThreshold();
+        if (this.processingModeOn) {
+          data.upperThresh -= 1;
+          if (data.upperThresh < 0) data.upperThresh = 255;
+          data.updateImageThreshold();
+        }
       },
       right: () => {
-        data.lowerThresh = (data.lowerThresh + 1) % 255;
-        data.updateImageThreshold();
+        if (this.processingModeOn) {
+          data.lowerThresh = (data.lowerThresh + 1) % 255;
+          data.updateImageThreshold();
+        }
       },
       left: () => {
-        data.lowerThresh -= 1;
-        if (data.lowerThresh < 0) data.lowerThresh = 255;
-        data.updateImageThreshold();
+        if (this.processingModeOn) {
+          data.lowerThresh -= 1;
+          if (data.lowerThresh < 0) data.lowerThresh = 255;
+          data.updateImageThreshold();
+        }
       },
     },
     {
