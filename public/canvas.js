@@ -1,4 +1,4 @@
-import { scanner, data, fsm } from "./fsm.js";
+import { data, fsm } from "./fsm.js";
 
 export class Canvas {
 
@@ -70,11 +70,14 @@ export class Canvas {
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
         this.ctx.drawImage(data.fullScreenImage, 0, 0);
         // cv.imshow('canvas', data.img)
-
-        scanner.moveRegion();
+        
         // this.drawHorizontalLine(scanner.upperLine);
         // this.drawHorizontalLine(scanner.lowerLine);
-        this.drawVerticalLine(scanner.centerX);
+        for (let index = 0; index < data.activeScanners.length; index++) {
+            const scanner = data.activeScanners[index];            
+            scanner.moveRegion();
+            this.drawVerticalLine(scanner.centerX);
+        }
         if (this.showData) this.drawValueLine(data.values);
         requestAnimationFrame(this.animate);
     }

@@ -5,7 +5,6 @@ import { Scanner } from "./scanner.js";
 import { onKeyDown } from "./UserInteraction.js"
 
 export const data = new Data();
-export const scanner = new Scanner();
 export const canvas = new Canvas();
 
 // ---------------- Script wrapper: ------------------
@@ -39,6 +38,7 @@ window.addEventListener('load', () => { // run when all code is fully loaded
 class FSM {
 
   stateIdx = 0;
+  currentScanner;
 
   states = [
     {
@@ -47,7 +47,7 @@ class FSM {
         document.querySelector('#info').textContent = `${data.upperThresh} | ${data.lowerThresh}`;
         data.updateImageThreshold();
       },
-      actuate: () => {
+      enter: () => {
         data.processImage();
         data.values = data.tempValues;
       },
@@ -71,11 +71,30 @@ class FSM {
       },
     },
     {
+      name: 'scan',
+      init: () => {
+        document.querySelector('#info').textContent = `${this.currentScanner.active}`;
+        console.log(this.currentScanner);
+      },
+      enter: () => { },
+      space: () => {
+        this.currentScanner.active = !this.currentScanner.active
+        document.querySelector('#info').textContent = this.currentScanner.active;
+
+        if (this.currentScanner.active) {
+          data.activeScanners.push(this.currentScanner);
+        }
+        else {
+          data.activeScanners.splice(data.activeScanners.indexOf(this.currentScanner), 1);
+        }
+      }
+    },
+    {
       name: 'midiCC',
       init: () => {
         document.querySelector('#info').textContent = Midi.cc;
       },
-      actuate: () => { },
+      enter: () => { },
       up: () => {
         Midi.cc = (Midi.cc + 1) % 128;
         document.querySelector('#info').textContent = Midi.cc;
@@ -90,24 +109,24 @@ class FSM {
 
       name: 'lines',
       init: () => {
-        document.querySelector('#info').textContent = scanner.upperLine;
+        document.querySelector('#info').textContent = this.currentScanner.upperLine;
       },
-      actuate: () => { },
+      enter: () => { },
       up: () => {
-        scanner.upperLine -= 1;
-        canvas.drawHorizontalLine(scanner.upperLine)
+        this.currentScanner.upperLine -= 1;
+        canvas.drawHorizontalLine(this.currentScanner.upperLine)
       },
       down: () => {
-        scanner.upperLine += 1;
-        canvas.drawHorizontalLine(scanner.upperLine)
+        this.currentScanner.upperLine += 1;
+        canvas.drawHorizontalLine(this.currentScanner.upperLine)
       },
       left: () => {
-        scanner.lowerLine -= 1;
-        canvas.drawHorizontalLine(scanner.lowerLine);
+        this.currentScanner.lowerLine -= 1;
+        canvas.drawHorizontalLine(this.currentScanner.lowerLine);
       },
       right: () => {
-        scanner.lowerLine += 1;
-        canvas.drawHorizontalLine(scanner.lowerLine);
+        this.currentScanner.lowerLine += 1;
+        canvas.drawHorizontalLine(this.currentScanner.lowerLine);
       }
     }, {
 
@@ -115,7 +134,7 @@ class FSM {
       init: () => {
         document.querySelector('#info').textContent = data.imagePath;
       },
-      actuate: () => {
+      enter: () => {
         data.postJsonData(data.composeJson());
       }
     },
@@ -123,7 +142,7 @@ class FSM {
       name: 'nextImage',
       init: () => {
       },
-      actuate: () => {
+      enter: () => {
         data.getNextImage();
         canvas.clearCanvas();
         if (canvas.showData) canvas.drawValueLine(data.values);
@@ -145,7 +164,6 @@ class FSM {
     this.stateIdx = (this.stateIdx + 1) % this.states.length;
     this.setState(this.states[this.stateIdx]);
     this.state.init();
-    
   }
 
   /**
@@ -173,38 +191,45 @@ class FSM {
   }
 
 
-updateInfo() {
+  /**
+   * update the content of the info box. this is called upon every key stroke. 
+   */
+  updateInfo() {
 
-  let value = '';
+    let value = '';
 
-  switch (this.state.name) {
+    switch (this.state.name) {
       case "processImage":
-          value = `${data.upperThresh} | ${data.lowerThresh}`
-          break;
+        value = `${data.upperThresh} | ${data.lowerThresh}`
+        break;
+
+      case "scan":
+        value = this.currentScanner.active;
+        break;
 
       case "midiCC":
-          value = Midi.cc;
-          break;
+        value = Midi.cc;
+        break;
 
       case "lines":
-          value = `${scanner.upperLine} | ${scanner.lowerLine}`
-          break;
+        value = `${this.currentScanner.upperLine} | ${this.currentScanner.lowerLine}`
+        break;
 
       case "export":
-          value = `${data.imagePath.split(".")[0]}.json`;
-          break;
+        value = `${data.imagePath.split(".")[0]}.json`;
+        break;
 
       case "nextImage":
-          value = document.querySelector('#info').textContent = `>>> ${data.silhouettes[(data.currentImageIndex + 1) % data.silhouettes.length]}`;
-          ;
-          break;
+        value = document.querySelector('#info').textContent = `>>> ${data.silhouettes[(data.currentImageIndex + 1) % data.silhouettes.length]}`;
+        ;
+        break;
 
       default:
-          break;
-  }
+        break;
+    }
 
-  document.querySelector('#info').textContent = value;
-}
+    document.querySelector('#info').textContent = value;
+  }
 }
 
 export const fsm = new FSM();

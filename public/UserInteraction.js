@@ -1,13 +1,14 @@
-import { scanner, data, canvas, fsm } from "./fsm.js";
+import { data, canvas, fsm } from "./fsm.js";
 import { Midi } from "./webMidi.js";
 
 export function onKeyDown(keyEvent) {
+    const currentScanner = data.scanners[data.silhouettes[data.currentImageIndex]];
     switch (keyEvent.key) {
         case '+':
-            scanner.moveSpeed = scanner.moveSpeed + 1;
+            currentScanner.moveSpeed = currentScanner.moveSpeed + 1;
             break;
         case '-':
-            scanner.moveSpeed = scanner.moveSpeed - 1;
+            currentScanner.moveSpeed = currentScanner.moveSpeed - 1;
             break;
 
         case 'v':
@@ -15,7 +16,7 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Enter':
-            fsm.state.actuate();
+            fsm.state.enter();
             fsm.next();
             break;
 

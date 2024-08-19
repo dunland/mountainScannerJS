@@ -8,6 +8,8 @@ export class Scanner {
 
     constructor() {
 
+        this.active = false;
+
         this.centerX = 0; // center of movingRegion
         this.moveSpeed = 1;
         this.position = 0;

@@ -1,4 +1,5 @@
-import { canvas } from "./fsm.js";
+import { canvas, fsm } from "./fsm.js";
+import { Scanner } from "./scanner.js";
 export class Data {
 
   constructor() {
@@ -10,6 +11,8 @@ export class Data {
 
     this.silhouettes = []; // list of images on server. will be retrieved upon getNextImage()
     this.silhouettesElements = []; // list of DOM silhouette image elements
+    this.scanners = {}; // list of scanners - one scanner for each image.
+    this.activeScanners = []; // lists only active scanners
     this.values = [];
     this.currentImageIndex = -1;
     this.rawValues = [];
@@ -121,6 +124,7 @@ export class Data {
           img.src = `silhouettes/${this.silhouettes[index]}`;
           document.body.append(img);
           this.silhouettesElements.push(img);
+          this.scanners[this.silhouettes[index]] = new Scanner();
           this.silhouettesElements[this.silhouettesElements.length - 1].style.display = 'None';
       }
   } catch (error) {
@@ -148,6 +152,8 @@ export class Data {
     // read image from html elements:
     this.img = cv.imread(this.silhouettesElements[this.currentImageIndex]);
     this.fullScreenImage = this.silhouettesElements[this.currentImageIndex];
+
+    fsm.currentScanner = this.scanners[this.silhouettes[this.currentImageIndex]];
 
     await this.loadJSON(`silhouettes/${currentImageJsonFile}`);
   }
