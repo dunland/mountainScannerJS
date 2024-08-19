@@ -9,6 +9,7 @@ export class Scanner {
     constructor() {
 
         this.active = false;
+        this.values = [];
 
         this.centerX = 0; // center of movingRegion
         this.moveSpeed = 1;
@@ -35,9 +36,9 @@ export class Scanner {
             this.position = screenWidth;
         }
 
-        const index = Math.floor((this.centerX / data.fullScreenImage.width) * data.values.length);
+        const index = Math.floor((this.centerX / data.fullScreenImage.width) * this.values.length);
         // console.log(index);
-        var value = data.values[index];
+        var value = this.values[index];
         const valueAsMidi = Math.max(Math.floor(127 - (value / screenHeight * 127)), 0);
         this.displayValue(this.position, value, index);
 

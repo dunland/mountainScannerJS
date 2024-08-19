@@ -12,9 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   Midi.loadWebMidi();
   await data.fetchSilhouettes();
-  console.log(data.values);
 
-  console.log(`dataHandler.values.length: ${data.values.length}`);
   console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
 
 })
@@ -49,7 +47,7 @@ class FSM {
       },
       enter: () => {
         data.processImage();
-        data.values = data.tempValues;
+        this.currentScanner.values = data.tempValues;
       },
       up: () => {
         data.upperThresh = (data.upperThresh + 1) % 255;
@@ -73,7 +71,7 @@ class FSM {
     {
       name: 'scan',
       init: () => {
-        document.querySelector('#info').textContent = `${this.currentScanner.active}`;
+        document.querySelector('#info').textContent = `[SPACE] ${this.currentScanner.active}`;
         console.log(this.currentScanner);
       },
       enter: () => { },
@@ -132,9 +130,10 @@ class FSM {
 
       name: 'export',
       init: () => {
-        document.querySelector('#info').textContent = data.imagePath;
+        document.querySelector('#info').textContent = `[SPACE] >> ${data.imagePath}`;
       },
-      enter: () => {
+      enter: () => {},
+      space: () => {
         data.postJsonData(data.composeJson());
       }
     },
@@ -145,7 +144,7 @@ class FSM {
       enter: () => {
         data.getNextImage();
         canvas.clearCanvas();
-        if (canvas.showData) canvas.drawValueLine(data.values);
+        if (canvas.showData) canvas.drawValueLine(this.currentScanner.values);
       }
     }
 
@@ -204,7 +203,7 @@ class FSM {
         break;
 
       case "scan":
-        value = this.currentScanner.active;
+        value = `[SPACE] ${this.currentScanner.active}`;
         break;
 
       case "midiCC":
@@ -216,7 +215,7 @@ class FSM {
         break;
 
       case "export":
-        value = `${data.imagePath.split(".")[0]}.json`;
+        value = `[SPACE] >> ${data.imagePath.split(".")[0]}.json`;
         break;
 
       case "nextImage":

@@ -60,7 +60,7 @@ export class Canvas {
             }
             this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
             cv.imshow('canvas', data.binary);
-            this.drawValueLine(data.values);
+            this.drawValueLine(fsm.currentScanner.values);
             // this.drawHorizontalLine(scanner.upperLine);
             // this.drawHorizontalLine(scanner.lowerLine);    
             requestAnimationFrame(this.animate);
@@ -77,8 +77,8 @@ export class Canvas {
             const scanner = data.activeScanners[index];            
             scanner.moveRegion();
             this.drawVerticalLine(scanner.centerX);
+            if (this.showData) this.drawValueLine(scanner.values);
         }
-        if (this.showData) this.drawValueLine(data.values);
         requestAnimationFrame(this.animate);
     }
 }

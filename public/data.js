@@ -13,7 +13,6 @@ export class Data {
     this.silhouettesElements = []; // list of DOM silhouette image elements
     this.scanners = {}; // list of scanners - one scanner for each image.
     this.activeScanners = []; // lists only active scanners
-    this.values = [];
     this.currentImageIndex = -1;
     this.rawValues = [];
     this.imagePath;
@@ -38,13 +37,13 @@ export class Data {
         this.imagePath = `silhouettes/${jsonData.imagePath}`;
         console.log("get image", this.imagePath);
         if (jsonData.values.length > 0) {
-          this.values = jsonData.values;
+          fsm.currentScanner.values = jsonData.values;
           // console.log("rawValues:", this.rawValues);
-          // this.values = this.remapInputValues(jsonData.values, 1080);
+          // fsm.currentScanner.values = this.remapInputValues(jsonData.values, 1080);
         }
         else {
           this.createEmptyValues();
-          jsonData.values = this.values;
+          jsonData.values = fsm.currentScanner.values;
           console.log(jsonData);
           this.postJsonData(jsonData);
         }
@@ -52,6 +51,9 @@ export class Data {
       .catch(error => {
         console.error("Error loading .json! (Maybe try a different browser)", error);
       })
+
+    console.log(fsm.currentScanner.values);
+    console.log(`fsm.currentScanner.values.length: ${fsm.currentScanner.values.length}`);
   }
 
   /**
@@ -64,12 +66,12 @@ export class Data {
     }
 
     return mappedValues;
-    // console.log('remapped:', this.values);
+    // console.log('remapped:', fsm.currentScanner.values);
   }
 
   createEmptyValues() {
     for (let index = 0; index < canvas.htmlCanvas.width; index++) {
-      this.values[index] = canvas.htmlCanvas.height / 2;
+      fsm.currentScanner.values[index] = canvas.htmlCanvas.height / 2;
     }
   }
 
@@ -80,7 +82,7 @@ export class Data {
     console.log(this.imagePath);
     const jsonData = {
       "imagePath": this.imagePath.split("/")[1], // get rid of 'silhouettes/'
-      "values": this.values
+      "values": fsm.currentScanner.values
       // TODO upperLine, lowerLine
     }
     return jsonData;
@@ -101,7 +103,7 @@ export class Data {
       },
       body: JSON.stringify(jsonData)
     })
-      .then(response => response.json())
+      .then(response => response.text())
       .then(data => {
         console.log('Success:', data);
       })
@@ -120,17 +122,17 @@ export class Data {
       this.silhouettes = silhouettes;
       // console.log('this.silhouettes:', this.silhouettes);
       for (let index = 0; index < this.silhouettes.length; index++) {
-          const img = document.createElement("img");
-          img.src = `silhouettes/${this.silhouettes[index]}`;
-          document.body.append(img);
-          this.silhouettesElements.push(img);
-          this.scanners[this.silhouettes[index]] = new Scanner();
-          this.silhouettesElements[this.silhouettesElements.length - 1].style.display = 'None';
+        const img = document.createElement("img");
+        img.src = `silhouettes/${this.silhouettes[index]}`;
+        document.body.append(img);
+        this.silhouettesElements.push(img);
+        this.scanners[this.silhouettes[index]] = new Scanner();
+        this.silhouettesElements[this.silhouettesElements.length - 1].style.display = 'None';
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching valid files:', error);
-  }
-  console.log('silhouettesElements:', this.silhouettesElements);
+    }
+    console.log('silhouettesElements:', this.silhouettesElements);
   }
 
   async getNextImage() {
@@ -140,7 +142,7 @@ export class Data {
     let currentImageFile = this.silhouettes[this.currentImageIndex];
 
     console.log(this.currentImageIndex, currentImageFile, this.silhouettes);
-    
+
     // get json
     let currentImageJsonFile = `${currentImageFile.split(".")[0]}.json`
     console.log(
@@ -187,6 +189,6 @@ export class Data {
         this.tempValues.push(0);
       }
     }
-    this.values = this.tempValues;
+    fsm.currentScanner.values = this.tempValues;
   }
 }
