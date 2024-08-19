@@ -3,11 +3,9 @@ import { WebMidi } from "./webmidi/dist/esm/webmidi.esm.js";
 export class Midi {
 
   synth;
-  cc;
+  tempNote;
 
   static loadWebMidi() {
-
-    this.cc = 44;
 
     try {
 
@@ -38,6 +36,7 @@ export class Midi {
 
             // this.synth = WebMidi.outputs[1];
             this.synth = WebMidi.getOutputByName("USB MIDI Interface MIDI 1");
+            this.synth.sendAllNotesOff();
           }
 
         }) // init output synth

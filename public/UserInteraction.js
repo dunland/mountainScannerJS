@@ -5,10 +5,10 @@ export function onKeyDown(keyEvent) {
     const currentScanner = data.scanners[data.silhouettes[data.currentImageIndex]];
     switch (keyEvent.key) {
         case '+':
-            currentScanner.moveSpeed = currentScanner.moveSpeed + 1;
+            currentScanner.moveSpeed = currentScanner.moveSpeed + 0.1;
             break;
         case '-':
-            currentScanner.moveSpeed = currentScanner.moveSpeed - 1;
+            currentScanner.moveSpeed = currentScanner.moveSpeed - 0.1;
             break;
 
         case 'v':

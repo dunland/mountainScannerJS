@@ -79,6 +79,7 @@ export class Canvas {
             this.drawVerticalLine(scanner.centerX);
             if (this.showData) this.drawValueLine(scanner.values);
         }
+        fsm.currentScanner.displayValue();
         requestAnimationFrame(this.animate);
     }
 }

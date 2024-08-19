@@ -10,19 +10,18 @@
 
 ## To Do
 
-- **data preprocessing:**
-- [ ] invert image
 - **functions**:
-- [ ] create a line per image
 - [ ] multiple lines per image for different thresholds
 - **usability**:
-- [ ] only enter "processImage" upon special key
-- [ ] navigation using arrow keys and sub-menus
+- [ ] switch scanners using TAB
+- [ ] scanners have different colors - active scanner with inverted image?
+- [ ] only enter "processImage" upon space bar
 - [ ] nanoKontrol
 - [ ] change data x when resizing image
 - [ ] hide mouse when fullscreen application
 - [ ] Enter: state actuation; Tab: skip to next state
 - **Zukunftsmusik**
+- [ ] navigation using arrow keys and sub-menus
 - [ ] parallel displays
 - [ ] weitere cv-Verarbeitungsmöglichkeiten: calman filter, ...
 

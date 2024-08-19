@@ -89,22 +89,31 @@ class FSM {
     },
     {
       name: 'midiCC',
-      init: () => {
-        document.querySelector('#info').textContent = Midi.cc;
-      },
+      init: () => { },
       enter: () => { },
       up: () => {
-        Midi.cc = (Midi.cc + 1) % 128;
-        document.querySelector('#info').textContent = Midi.cc;
+        this.currentScanner.cc += 1;
+        if (this.currentScanner.cc > 127) {
+          this.currentScanner.cc = -1;
+        }
       },
       down: () => {
-        Midi.cc -= 1;
-        if (Midi.cc < 0)
-          Midi.cc = 127;
-        document.querySelector('#info').textContent = Midi.cc;
+        this.currentScanner.cc -= 1;
+        if (this.currentScanner.cc < -1) {
+          this.currentScanner.cc = 127;
+        }
       },
-    }, {
-
+      space: () => {
+        if (this.currentScanner.cc > -1) {
+          this.tempMidi = this.currentScanner.cc;
+          this.currentScanner.cc = -1;
+        }
+        else {
+          this.currentScanner.cc = this.tempMidi;
+        }
+      }
+    },
+    {
       name: 'lines',
       init: () => {
         document.querySelector('#info').textContent = this.currentScanner.upperLine;
@@ -132,7 +141,7 @@ class FSM {
       init: () => {
         document.querySelector('#info').textContent = `[SPACE] >> ${data.imagePath}`;
       },
-      enter: () => {},
+      enter: () => { },
       space: () => {
         data.postJsonData(data.composeJson());
       }
@@ -207,7 +216,7 @@ class FSM {
         break;
 
       case "midiCC":
-        value = Midi.cc;
+        value = (this.currentScanner.cc < 0) ? 'sendNote' : this.currentScanner.cc;
         break;
 
       case "lines":
