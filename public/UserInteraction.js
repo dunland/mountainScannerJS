@@ -25,7 +25,8 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Tab':
-            fsm.next();
+            // fsm.next();
+            data.getNextImage();
             break;
 
         case 'ArrowUp':
