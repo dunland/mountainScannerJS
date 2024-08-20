@@ -1,8 +1,8 @@
 import { Canvas } from "./canvas.js";
 import { Data } from "./data.js";
 import { Midi } from "./webMidi.js";
-import { Scanner } from "./scanner.js";
 import { onKeyDown } from "./UserInteraction.js"
+import { colorFrom7bitValue } from "./utils.js";
 
 export const data = new Data();
 export const canvas = new Canvas();
@@ -131,6 +131,7 @@ class FSM {
       },
       space: () => {
         this.currentScanner.cc = this.tempCC;
+        this.currentScanner.color = colorFrom7bitValue(this.currentScanner.cc);
 
         // if (this.currentScanner.cc > -1) {
         //   this.tempMidi = this.currentScanner.cc;

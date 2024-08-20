@@ -1,5 +1,6 @@
 import { data } from "./fsm.js";
 import { Midi } from "./webMidi.js";
+import { colorFrom7bitValue } from "./utils.js"
 
 const screenWidth = window.innerWidth;
 const screenHeight = window.innerHeight;
@@ -21,6 +22,8 @@ export class Scanner {
 
         this.upperLine = Math.floor(window.innerHeight / 3);
         this.lowerLine = Math.floor(window.innerHeight * 2 / 3);
+
+        this.color = colorFrom7bitValue(this.cc);
     }
 
     // ------------------- functions: --------------------
