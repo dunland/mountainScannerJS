@@ -3,6 +3,7 @@ import { WebMidi } from "./webmidi/dist/esm/webmidi.esm.js";
 export class Midi {
 
   synth;
+  synthConfig; // json-file to hold MIDI CC numbers for the specific synth(s)
   tempNote;
 
   static loadWebMidi() {
@@ -31,7 +32,7 @@ export class Midi {
           else {
             console.log("Midi Outputs:");
             WebMidi.outputs.forEach((device, index) => {
-              console.log(`${index}: ${device.name}`);
+              console.log(`\t${index}: ${device.name}`);
             });
 
             // this.synth = WebMidi.outputs[1];
@@ -42,9 +43,25 @@ export class Midi {
         }) // init output synth
         .catch(err => alert(err));
 
-      console.log(`WebMidi.inputs: ${WebMidi.inputs}`);
     } catch (error) {
       console.error("could not initialize MIDI.", error);
     }
   }
+
+  /**
+   * get the midi CC mapping from server
+   */
+  static async fetchSynthConfig() {
+    try {
+      await fetch('./synth-config/volca.json')
+      .then(response => response.json())
+      .then(data => {
+        this.synthConfig = data;
+      });
+
+    } catch (error) {
+      console.error('Error fetching valid files:', error);
+    }
+  }
+
 }

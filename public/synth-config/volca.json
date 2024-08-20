@@ -1,0 +1,18 @@
+{
+    "5" : "PORTAMENTO",
+    "11" : "EXPRESSION",
+    "40" : "VOICE",
+    "41" : "OCTAVE",
+    "42" : "DETUNE",
+    "43" : "VCO EG INT",
+    "44" : "CUTOFF",
+    "45" : "VCF EG INT",
+    "46" : "LFO RATE",
+    "47" : "LFO PITCH INT",
+    "48" : "LFO CUTOFF INT",
+    "49" : "EG ATTACK",
+    "50" : "EG DECAY/RELEASE",
+    "51" : "EG SUSTAIN",
+    "52" : "DELAY TIME",
+    "53" : "DELAY FEEDBACK"
+}

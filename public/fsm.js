@@ -19,7 +19,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 addEventListener("keydown", onKeyDown);
 
-window.addEventListener('load', () => { // run when all code is fully loaded
+window.addEventListener('load', async () => { // run when all code is fully loaded
+
+  await Midi.fetchSynthConfig();
+  console.log(Midi.synthConfig);
+
 
   console.log("openCV loaded!");
   data.fullScreenImage = document.querySelector("#FullscreenImage");
@@ -38,6 +42,8 @@ class FSM {
   stateIdx = 0;
   currentScanner;
   processingModeOn = false;
+  tempCC = 44;
+  tempCCidx = 0;
 
   states = [
     {
@@ -55,6 +61,7 @@ class FSM {
         if (this.processingModeOn) {
           data.processImage();
           this.currentScanner.values = data.tempValues;
+          this.processingModeOn = false;
         }
       },
       up: () => {
@@ -105,53 +112,59 @@ class FSM {
     },
     {
       name: 'midiCC',
-      init: () => { },
+      init: () => {
+        document.querySelector('#info').textContent = (this.currentScanner.cc >= 0) ? `${this.currentScanner.cc} ${Midi.synthConfig[this.currentScanner.cc]}` : 'sendNote';
+       },
       enter: () => { },
       up: () => {
-        this.currentScanner.cc += 1;
-        if (this.currentScanner.cc > 127) {
-          this.currentScanner.cc = -1;
-        }
+        this.tempCCidx = (this.tempCCidx + 1) % (Object.keys(Midi.synthConfig).length + 1);
+        this.tempCC = parseInt(Object.keys(Midi.synthConfig)[this.tempCCidx]) || -1;
+        console.log(this.tempCCidx, this.tempCC, Midi.synthConfig[this.tempCC]);
       },
       down: () => {
-        this.currentScanner.cc -= 1;
-        if (this.currentScanner.cc < -1) {
-          this.currentScanner.cc = 127;
+        this.tempCCidx -= 1;
+        if (this.tempCCidx < 0) {
+          this.tempCCidx = Object.keys(Midi.synthConfig).length;
         }
+        this.tempCC = parseInt(Object.keys(Midi.synthConfig)[this.tempCCidx]) || -1;
+        console.log(this.tempCCidx, this.tempCC, Midi.synthConfig[this.tempCC]);
       },
       space: () => {
-        if (this.currentScanner.cc > -1) {
-          this.tempMidi = this.currentScanner.cc;
-          this.currentScanner.cc = -1;
-        }
-        else {
-          this.currentScanner.cc = this.tempMidi;
-        }
+        this.currentScanner.cc = this.tempCC;
+
+        // if (this.currentScanner.cc > -1) {
+        //   this.tempMidi = this.currentScanner.cc;
+        //   this.currentScanner.cc = -1;
+        // }
+        // else {
+        //   this.currentScanner.cc = this.tempMidi;
+        // }
       }
     },
+    // {
+    //   name: 'lines',
+    //   init: () => {
+    //     document.querySelector('#info').textContent = this.currentScanner.upperLine;
+    //   },
+    //   enter: () => { },
+    //   up: () => {
+    //     this.currentScanner.upperLine -= 1;
+    //     canvas.drawHorizontalLine(this.currentScanner.upperLine)
+    //   },
+    //   down: () => {
+    //     this.currentScanner.upperLine += 1;
+    //     canvas.drawHorizontalLine(this.currentScanner.upperLine)
+    //   },
+    //   left: () => {
+    //     this.currentScanner.lowerLine -= 1;
+    //     canvas.drawHorizontalLine(this.currentScanner.lowerLine);
+    //   },
+    //   right: () => {
+    //     this.currentScanner.lowerLine += 1;
+    //     canvas.drawHorizontalLine(this.currentScanner.lowerLine);
+    //   }
+    // }, 
     {
-      name: 'lines',
-      init: () => {
-        document.querySelector('#info').textContent = this.currentScanner.upperLine;
-      },
-      enter: () => { },
-      up: () => {
-        this.currentScanner.upperLine -= 1;
-        canvas.drawHorizontalLine(this.currentScanner.upperLine)
-      },
-      down: () => {
-        this.currentScanner.upperLine += 1;
-        canvas.drawHorizontalLine(this.currentScanner.upperLine)
-      },
-      left: () => {
-        this.currentScanner.lowerLine -= 1;
-        canvas.drawHorizontalLine(this.currentScanner.lowerLine);
-      },
-      right: () => {
-        this.currentScanner.lowerLine += 1;
-        canvas.drawHorizontalLine(this.currentScanner.lowerLine);
-      }
-    }, {
 
       name: 'export',
       init: () => {
@@ -232,7 +245,8 @@ class FSM {
         break;
 
       case "midiCC":
-        value = (this.currentScanner.cc < 0) ? 'sendNote' : this.currentScanner.cc;
+        value = (this.tempCC >= 0) ? `${this.tempCC} ${Midi.synthConfig[this.tempCC]}` : 'sendNote';
+        document.getElementById('info').style.fontWeight = (this.tempCC == this.currentScanner.cc) ? 'bold' : 'normal';
         break;
 
       case "lines":
@@ -244,7 +258,7 @@ class FSM {
         break;
 
       case "nextImage":
-        value = document.querySelector('#info').textContent = `>>> ${data.silhouettes[(data.currentImageIndex + 1) % data.silhouettes.length]}`;
+        value = `>>> ${data.silhouettes[(data.currentImageIndex + 1) % data.silhouettes.length]}`;
         ;
         break;
 

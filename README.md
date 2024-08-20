@@ -18,7 +18,6 @@
 - [ ] nanoKontrol
 - [ ] change data x when resizing image
 - [ ] hide mouse when fullscreen application
-- [ ] Enter: state actuation; Tab: skip to next state
 - **Zukunftsmusik**
 - [ ] navigation using arrow keys and sub-menus
 - [ ] parallel displays
@@ -57,6 +56,7 @@ fsm: opencvloaded:
 - [x] leave state "export" -> create jsonObject and POST to server
 17.07.2024
 - [x] `updateImageThreshold`: create json-data-array of first black pixel:
+
 ``` javascript
     this.tempValues = [];
     for (let col = 0; col < this.binary.cols; col++) {

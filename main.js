@@ -37,10 +37,12 @@ fs.readdir(dir + "/silhouettes", (err, files) => {
   console.log("silhouettes:", silhouettes);
 });
 
+// send data to client:
 app.get('/silhouettes', (req, res) => {
   res.json(silhouettes);
 })
 
+// receive data from client:
 app.post('/upload', (req, res) => {
   // The JSON data sent by the client is available in req.body
   const jsonData = req.body;
