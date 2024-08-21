@@ -8,8 +8,10 @@ export class Canvas {
         this.htmlCanvas = document.getElementById("canvas");
         this.ctx = this.htmlCanvas.getContext("2d");
 
-        this.htmlCanvas.width = innerWidth;
-        this.htmlCanvas.height = innerHeight;
+        this.htmlCanvas.width = window.innerWidth;
+        this.htmlCanvas.height = window.innerHeight;
+
+        console.log(`htmlCanvas: ${this.htmlCanvas.width} x ${this.htmlCanvas.height} px`);
 
         this.animate = this.animate.bind(this); // when a function is called as a callback (such as in requestAnimationFrame), the context (this) is lost unless explicitly bound.
 
@@ -24,7 +26,7 @@ export class Canvas {
 
         for (let index = 0; index < scanner.values.length; index++) {
             const value = scanner.values[index];
-            this.ctx.lineTo(Math.floor(index / scanner.values.length * innerWidth), value, 1, 1);
+            this.ctx.lineTo(Math.floor(index / scanner.values.length * window.innerWidth), value, 1, 1);
         }
         this.ctx.stroke();
     }
@@ -48,7 +50,7 @@ export class Canvas {
         this.ctx.strokeStyle = scanner.color;
         this.ctx.beginPath();
         this.ctx.moveTo(scanner.centerX, 0);
-        this.ctx.lineTo(scanner.centerX, innerHeight);
+        this.ctx.lineTo(scanner.centerX, window.innerHeight);
         this.ctx.stroke();
     }
 

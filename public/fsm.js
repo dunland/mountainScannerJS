@@ -19,8 +19,6 @@ addEventListener("keydown", onKeyDown);
 window.addEventListener('load', async () => { // run when all code is fully loaded
 
   await Midi.fetchSynthConfig();
-  console.log(Midi.synthConfig);
-
 
   console.log("openCV loaded!");
   data.gray = new cv.Mat();
@@ -58,6 +56,7 @@ class FSM {
           data.processImage();
           this.currentScanner.values = data.tempValues;
           this.processingModeOn = false;
+          this.currentScanner.setActive(true);
         }
       },
       up: () => {
@@ -95,15 +94,7 @@ class FSM {
       },
       enter: () => { },
       space: () => {
-        this.currentScanner.active = !this.currentScanner.active
-        document.querySelector('#info').textContent = this.currentScanner.active;
-
-        if (this.currentScanner.active) {
-          data.activeScanners.push(this.currentScanner);
-        }
-        else {
-          data.activeScanners.splice(data.activeScanners.indexOf(this.currentScanner), 1);
-        }
+        this.currentScanner.setActive(!this.currentScanner.active);
       }
     },
     {
@@ -127,7 +118,7 @@ class FSM {
       },
       space: () => {
         this.currentScanner.cc = this.tempCC;
-        this.currentScanner.color = colorFrom7bitValue(this.currentScanner.cc);
+        // this.currentScanner.color = colorFrom7bitValue(this.currentScanner.cc);
 
         // if (this.currentScanner.cc > -1) {
         //   this.tempMidi = this.currentScanner.cc;
@@ -238,7 +229,7 @@ class FSM {
         break;
 
       case "scan":
-        value = `[SPACE] ${this.currentScanner.active}`;
+        value = `[SPACE] ${(this.currentScanner.active) ? 'on' : 'off'}`;
         break;
 
       case "midiCC":

@@ -60,7 +60,7 @@ export class Data {
   remapInputValues(rawValues, height) {
     const mappedValues = [];
     for (let index = 0; index < rawValues.length; index++) {
-      mappedValues[index] = Math.round(rawValues[index] / height * innerHeight);
+      mappedValues[index] = Math.round(rawValues[index] / height * window.innerHeight);
     }
 
     return mappedValues;
@@ -123,8 +123,8 @@ export class Data {
         const img = document.createElement("img");
         img.src = `silhouettes/${this.silhouettes[index]}`;
         document.body.append(img);
-        img.width = innerWidth;
-        img.height = innerHeight;
+        img.width = window.innerWidth;
+        img.height = window.innerHeight;
         this.silhouettesElements.push(img);
         this.scanners[this.silhouettes[index]] = new Scanner();
         this.silhouettesElements[this.silhouettesElements.length - 1].style.display = 'None';
@@ -153,7 +153,7 @@ export class Data {
 
     // read image from html elements:
     this.rawImg = cv.imread(this.silhouettesElements[this.currentImageIndex]);
-    const dSize = new cv.Size(innerWidth, innerHeight);
+    const dSize = new cv.Size(window.innerWidth, window.innerHeight);
     this.img = new cv.Mat();
     cv.resize(this.rawImg, this.img, dSize, cv.INTER_LINEAR);
 
