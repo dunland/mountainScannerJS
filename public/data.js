@@ -3,8 +3,6 @@ import { Scanner } from "./scanner.js";
 export class Data {
 
   constructor() {
-    this.fullScreenImage;
-
     this.img;
     this.gray
     this.binary;
@@ -113,7 +111,7 @@ export class Data {
   }
 
   /**
-   * get list of files stored in public/silhouettes and store it in silhouettesElements
+   * get list of files stored in public/silhouettes and store the images as html elemtns (silhouettesElements)
    */
   async fetchSilhouettes() {
     try {
@@ -125,6 +123,8 @@ export class Data {
         const img = document.createElement("img");
         img.src = `silhouettes/${this.silhouettes[index]}`;
         document.body.append(img);
+        img.width = innerWidth;
+        img.height = innerHeight;
         this.silhouettesElements.push(img);
         this.scanners[this.silhouettes[index]] = new Scanner();
         this.silhouettesElements[this.silhouettesElements.length - 1].style.display = 'None';
@@ -141,7 +141,7 @@ export class Data {
     this.currentImageIndex = (this.currentImageIndex + 1) % this.silhouettes.length;
     let currentImageFile = this.silhouettes[this.currentImageIndex];
 
-    console.log(this.currentImageIndex, currentImageFile, this.silhouettes);
+    // console.log(this.currentImageIndex, currentImageFile, this.silhouettes);
 
     // get json
     let currentImageJsonFile = `${currentImageFile.split(".")[0]}.json`
@@ -152,8 +152,10 @@ export class Data {
     );
 
     // read image from html elements:
-    this.img = cv.imread(this.silhouettesElements[this.currentImageIndex]);
-    this.fullScreenImage = this.silhouettesElements[this.currentImageIndex];
+    this.rawImg = cv.imread(this.silhouettesElements[this.currentImageIndex]);
+    const dSize = new cv.Size(innerWidth, innerHeight);
+    this.img = new cv.Mat();
+    cv.resize(this.rawImg, this.img, dSize, cv.INTER_LINEAR);
 
     fsm.currentScanner = this.scanners[this.silhouettes[this.currentImageIndex]];
 

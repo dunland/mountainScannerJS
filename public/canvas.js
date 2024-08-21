@@ -24,7 +24,7 @@ export class Canvas {
 
         for (let index = 0; index < scanner.values.length; index++) {
             const value = scanner.values[index];
-            this.ctx.lineTo(Math.floor(index / scanner.values.length * data.fullScreenImage.width), value, 1, 1);
+            this.ctx.lineTo(Math.floor(index / scanner.values.length * innerWidth), value, 1, 1);
         }
         this.ctx.stroke();
     }
@@ -40,7 +40,7 @@ export class Canvas {
         this.ctx.strokeStyle = "red";
         this.ctx.beginPath();
         this.ctx.moveTo(0, yPos);
-        this.ctx.lineTo(data.fullScreenImage.width, yPos);
+        this.ctx.lineTo(innerWidth, yPos);
         this.ctx.stroke();
     }
 
@@ -48,7 +48,7 @@ export class Canvas {
         this.ctx.strokeStyle = scanner.color;
         this.ctx.beginPath();
         this.ctx.moveTo(scanner.centerX, 0);
-        this.ctx.lineTo(scanner.centerX, data.fullScreenImage.height);
+        this.ctx.lineTo(scanner.centerX, innerHeight);
         this.ctx.stroke();
     }
 
@@ -68,8 +68,7 @@ export class Canvas {
         }
 
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-        this.ctx.drawImage(data.fullScreenImage, 0, 0);
-        // cv.imshow('canvas', data.img)
+        cv.imshow('canvas', data.img);
 
         // this.drawHorizontalLine(scanner.upperLine);
         // this.drawHorizontalLine(scanner.lowerLine);

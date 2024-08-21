@@ -12,9 +12,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   Midi.loadWebMidi();
   await data.fetchSilhouettes();
-
-  console.log("FullscreenImage.width", document.getElementById('FullscreenImage').width);
-
 })
 
 addEventListener("keydown", onKeyDown);
@@ -26,7 +23,6 @@ window.addEventListener('load', async () => { // run when all code is fully load
 
 
   console.log("openCV loaded!");
-  data.fullScreenImage = document.querySelector("#FullscreenImage");
   data.gray = new cv.Mat();
   data.binary = new cv.Mat();
 

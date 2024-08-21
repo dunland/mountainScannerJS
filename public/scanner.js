@@ -42,15 +42,16 @@ export class Scanner {
             this.position = screenWidth;
         }
 
-        this.currentIndex = Math.floor((this.centerX / data.fullScreenImage.width) * this.values.length);
+        this.currentIndex = Math.floor((this.centerX / innerWidth) * this.values.length);
         const value = this.values[this.currentIndex];
         // console.log(index);
 
         // console.log(`value ${value} as midi: ${ 127 - (value/screenHeight * 127)}`);
         if (Midi.synth) {
-            // console.log("broadcasting", asMidi(value), value, position);
-            if (this.cc >= 0)
+            console.log("broadcasting", asMidi(value), value, this.cc);
+            if (this.cc && this.cc >= 0){
                 Midi.synth.sendControlChange(this.cc, asMidi(value));
+            }
             else {
                 if (asMidi(value) != Midi.tempNote){
                     Midi.synth.sendNoteOn(asMidi(value));

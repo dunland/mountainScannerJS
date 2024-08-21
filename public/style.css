@@ -5,7 +5,7 @@ html {
     overflow: hidden;
 }
 
-#FullscreenImage {
+#canvas {
     top: 0;
     left: 0;
     height: 100vh;
