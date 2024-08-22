@@ -7,11 +7,13 @@ const screenHeight = window.innerHeight;
 
 export class Scanner {
 
-    constructor() {
+    constructor(imgElement) {
 
         this.active = false;
         this.values = [];
         this.currentIndex = 0;
+
+        this.imgElement = imgElement;
 
         this.centerX = 0; // center of movingRegion
         this.moveSpeed = 1;

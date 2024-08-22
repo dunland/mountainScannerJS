@@ -7,11 +7,11 @@ export class Data {
     this.gray
     this.binary;
 
-    this.silhouettes = []; // list of images on server. will be retrieved upon getNextImage()
+    this.allSilhouettes = []; // list of images on server. will be retrieved upon getNextImage()
     this.silhouettesElements = []; // list of DOM silhouette image elements
-    this.scanners = {}; // list of scanners - one scanner for each image.
+    this.scanners = []; // list containing all scanner objects
     this.activeScanners = []; // lists only active scanners
-    this.currentImageIndex = -1;
+    this.currentScannerIndex = -1;
     this.rawValues = [];
     this.imagePath;
 
@@ -26,7 +26,7 @@ export class Data {
    * read the data from image json
    * @param {string} dataFile url to json file 
    */
-  async loadJSON(dataFile) {
+  async fetchJSON(dataFile) {
 
     const response = await fetch(dataFile)
       .then((res) => res.json())
@@ -117,17 +117,17 @@ export class Data {
     try {
       const response = await fetch('/silhouettes');
       const silhouettes = await response.json();
-      this.silhouettes = silhouettes;
+      this.allSilhouettes = silhouettes;
       // console.log('this.silhouettes:', this.silhouettes);
-      for (let index = 0; index < this.silhouettes.length; index++) {
+      for (let index = 0; index < this.allSilhouettes.length; index++) {
         const img = document.createElement("img");
-        img.src = `silhouettes/${this.silhouettes[index]}`;
+        img.src = `silhouettes/${this.allSilhouettes[index]}`;
+        img.style.display = 'None';
         document.body.append(img);
-        img.width = window.innerWidth;
-        img.height = window.innerHeight;
+        // img.width = window.innerWidth;
+        // img.height = window.innerHeight;
         this.silhouettesElements.push(img);
-        this.scanners[this.silhouettes[index]] = new Scanner();
-        this.silhouettesElements[this.silhouettesElements.length - 1].style.display = 'None';
+        this.scanners[index] = new Scanner(img);
       }
     } catch (error) {
       console.error('Error fetching valid files:', error);
@@ -135,31 +135,33 @@ export class Data {
     console.log('silhouettesElements:', this.silhouettesElements);
   }
 
-  async getNextImage() {
+  /**
+   * get next image from silhouettesElements list and update fsm.currentScanner
+   * @param {bool} fetchJSON if true, JSON file is retrieved from server.
+   */
+  async getNextImage(fetchJSON = true) {
+    console.log('retrieving next image..');
     // Use the list of valid file paths here
     // increment image list index
-    this.currentImageIndex = (this.currentImageIndex + 1) % this.silhouettes.length;
-    let currentImageFile = this.silhouettes[this.currentImageIndex];
-
-    // console.log(this.currentImageIndex, currentImageFile, this.silhouettes);
+    let idx = (this.scanners.indexOf(fsm.currentScanner) + 1) % this.scanners.length;
+    fsm.currentScanner = this.scanners[idx];
 
     // get json
-    let currentImageJsonFile = `${currentImageFile.split(".")[0]}.json`
+    let currentImageJsonFile = `${fsm.currentScanner.imgElement.src.split(".")[0]}.json`
     console.log(
-      `this.currentImageIndex:${this.currentImageIndex},
-           currentImageFile: ${currentImageFile},
-           currentImageJson: ${currentImageJsonFile}`
+      `idx:${idx},
+           fsm.currentScanner.imgElement.src: ${fsm.currentScanner.imgElement.src},
+           currentImageJsonFile: ${currentImageJsonFile}`
     );
 
     // read image from html elements:
-    this.rawImg = cv.imread(this.silhouettesElements[this.currentImageIndex]);
+    this.rawImg = cv.imread(fsm.currentScanner.imgElement);
     const dSize = new cv.Size(window.innerWidth, window.innerHeight);
     this.img = new cv.Mat();
     cv.resize(this.rawImg, this.img, dSize, cv.INTER_LINEAR);
 
-    fsm.currentScanner = this.scanners[this.silhouettes[this.currentImageIndex]];
-
-    await this.loadJSON(`silhouettes/${currentImageJsonFile}`);
+    if (fetchJSON)
+      await this.fetchJSON(currentImageJsonFile);
   }
 
   updateImageThreshold() {

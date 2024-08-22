@@ -55,30 +55,21 @@ export class Canvas {
     }
 
     animate() {
-        if (fsm.processingModeOn) {
-            if (!data.binary) {
-                console.assert(data.binary, "data.binary", data.binary);
-                return
-            }
-            this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-            cv.imshow('canvas', data.binary);
-            this.drawValueLine(fsm.currentScanner.values);
-            // this.drawHorizontalLine(scanner.upperLine);
-            // this.drawHorizontalLine(scanner.lowerLine);    
-            requestAnimationFrame(this.animate);
-            return
-        }
-
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-        cv.imshow('canvas', data.img);
+        if (fsm.processingModeOn)
+            cv.imshow('canvas', data.binary);
+        else
+            cv.imshow('canvas', data.img);
 
         // this.drawHorizontalLine(scanner.upperLine);
         // this.drawHorizontalLine(scanner.lowerLine);
         for (let index = 0; index < data.activeScanners.length; index++) {
             const scanner = data.activeScanners[index];
-            scanner.moveRegion();
-            this.drawVerticalLine(scanner);
-            if (this.showData) this.drawValueLine(scanner);
+            if (!(scanner == fsm.currentScanner && fsm.processingModeOn)){
+                scanner.moveRegion();
+                this.drawVerticalLine(scanner);
+                if (this.showData) this.drawValueLine(scanner);
+            }
         }
         fsm.currentScanner.displayValue();
         requestAnimationFrame(this.animate);

@@ -2,13 +2,12 @@ import { data, canvas, fsm } from "./fsm.js";
 import { Midi } from "./webMidi.js";
 
 export function onKeyDown(keyEvent) {
-    const currentScanner = data.scanners[data.silhouettes[data.currentImageIndex]];
     switch (keyEvent.key) {
         case '+':
-            currentScanner.moveSpeed = currentScanner.moveSpeed + 0.1;
+            fsm.currentScanner.moveSpeed = fsm.currentScanner.moveSpeed + 0.1;
             break;
         case '-':
-            currentScanner.moveSpeed = currentScanner.moveSpeed - 0.1;
+            fsm.currentScanner.moveSpeed = fsm.currentScanner.moveSpeed - 0.1;
             break;
 
         case 'v':
@@ -25,8 +24,18 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Tab':
-            // fsm.next();
-            data.getNextImage();
+            let idx = data.activeScanners.indexOf(fsm.currentScanner); // last active scanner
+            if (idx < 0) break;
+
+            idx = (idx + 1) % data.activeScanners.length;
+            
+            fsm.currentScanner = data.activeScanners[idx];
+
+            // read image from html elements:
+            data.rawImg = cv.imread(fsm.currentScanner.imgElement);
+            const dSize = new cv.Size(window.innerWidth, window.innerHeight);
+            data.img = new cv.Mat();
+            cv.resize(data.rawImg, data.img, dSize, cv.INTER_LINEAR);
             break;
 
         case 'ArrowUp':

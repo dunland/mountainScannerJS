@@ -3,6 +3,7 @@ import { Data } from "./data.js";
 import { Midi } from "./webMidi.js";
 import { onKeyDown } from "./UserInteraction.js"
 import { colorFrom7bitValue } from "./utils.js";
+import { Scanner } from "./scanner.js";
 
 export const data = new Data();
 export const canvas = new Canvas();
@@ -34,7 +35,7 @@ window.addEventListener('load', async () => { // run when all code is fully load
 class FSM {
 
   stateIdx = 0;
-  currentScanner;
+  currentScanner = new Scanner();
   processingModeOn = false;
   tempCC = 44;
   tempCCidx = 0;
@@ -246,7 +247,7 @@ class FSM {
         break;
 
       case "nextImage":
-        value = `>>> ${data.silhouettes[(data.currentImageIndex + 1) % data.silhouettes.length]}`;
+        value = `>>> ${data.allSilhouettes[(data.scanners.indexOf(this.currentScanner) + 1) % data.allSilhouettes.length]}`;
         ;
         break;
 
