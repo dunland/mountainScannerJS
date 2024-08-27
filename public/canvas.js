@@ -58,12 +58,12 @@ export class Canvas {
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
         if (fsm.processingModeOn) {
             cv.imshow('canvas', data.binary);
+            this.drawHorizontalLine(fsm.currentScanner.upperLine);
+            this.drawHorizontalLine(fsm.currentScanner.lowerLine);
         }
         else
             cv.imshow('canvas', data.img);
-    
-        this.drawHorizontalLine(fsm.currentScanner.upperLine);
-        this.drawHorizontalLine(fsm.currentScanner.lowerLine);
+
         for (let index = 0; index < data.activeScanners.length; index++) {
             const scanner = data.activeScanners[index];
             if (!(scanner == fsm.currentScanner && fsm.processingModeOn)) {

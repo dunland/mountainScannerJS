@@ -5,9 +5,11 @@ export function onKeyDown(keyEvent) {
     switch (keyEvent.key) {
         case '+':
             fsm.currentScanner.moveSpeed = fsm.currentScanner.moveSpeed + 0.1;
+            console.log(`moveSpeed: ${fsm.currentScanner.moveSpeed}`);
             break;
         case '-':
             fsm.currentScanner.moveSpeed = fsm.currentScanner.moveSpeed - 0.1;
+            console.log(`moveSpeed: ${fsm.currentScanner.moveSpeed}`);
             break;
 
         case 'v':
@@ -15,8 +17,9 @@ export function onKeyDown(keyEvent) {
             break;
 
         case 'Enter':
-            fsm.state.enter();
-            fsm.next();
+            if (fsm.state.enter)
+                fsm.state.enter();
+            fsm.state.init();
             break;
 
         case 'Backspace':
@@ -28,7 +31,7 @@ export function onKeyDown(keyEvent) {
             if (idx < 0) break;
 
             idx = (idx + 1) % data.activeScanners.length;
-            
+
             fsm.currentScanner = data.activeScanners[idx];
 
             // read image from html elements:
@@ -47,13 +50,35 @@ export function onKeyDown(keyEvent) {
             if (fsm.state.down)
                 fsm.state.down();
             break;
-        case 'ArrowLeft':
-            if (fsm.state.left)
-                fsm.state.left();
+
+        case 'i':
+            if (fsm.state.i)
+                fsm.state.i();
             break;
+
+        case 'o':
+            if (fsm.state.o)
+                fsm.state.o();
+            break;
+
+        case 'k':
+            if (fsm.state.k)
+                fsm.state.k();
+            break;
+
+        case 'l':
+            if (fsm.state.l)
+                fsm.state.l();
+            break;
+
+        case 'ArrowLeft':
+            if (!fsm.processingModeOn)
+                fsm.previous();
+            break;
+
         case 'ArrowRight':
-            if (fsm.state.right)
-                fsm.state.right();
+            if (!fsm.processingModeOn)
+                fsm.next();
             break;
 
         case ' ':
@@ -66,6 +91,9 @@ export function onKeyDown(keyEvent) {
             break;
     }
     fsm.updateInfo();
+
+    // TODO: fsm functions as dict
+    // fsm.state[keyEvent.key]();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

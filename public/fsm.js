@@ -45,16 +45,19 @@ class FSM {
       name: "processImage",
       init: () => {
         document.querySelector('#info').textContent = `${data.upperThresh} | ${data.lowerThresh}`;
-        // data.updateImageThreshold();
         this.processingModeOn = false;
       },
       space: () => {
+        data.updateImageThreshold();
+        if (this.processingModeOn) {
+          data.findBlackPixels();
+          this.currentScanner.setActive(true);
+        }
         this.processingModeOn = !this.processingModeOn;
-        if (this.processingModeOn) data.updateImageThreshold();
       },
       enter: () => {
         if (this.processingModeOn) {
-          data.processImage();
+          data.findBlackPixels();
           this.processingModeOn = false;
           this.currentScanner.setActive(true);
         }
@@ -85,6 +88,22 @@ class FSM {
           data.updateImageThreshold();
         }
       },
+      i: () => {
+        if (this.currentScanner.upperLine > 0)
+          this.currentScanner.upperLine -= 1;
+      },
+      o: () => {
+        if (this.currentScanner.upperLine < this.currentScanner.lowerLine - 1)
+          this.currentScanner.upperLine += 1;
+      },
+      k: () => {
+        if (this.currentScanner.lowerLine > this.currentScanner.upperLine + 1)
+          this.currentScanner.lowerLine -= 1;
+      },
+      l: () => {
+        if (this.currentScanner.lowerLine < window.innerHeight)
+          this.currentScanner.lowerLine += 1;
+      }
     },
     {
       name: 'scan',
@@ -129,29 +148,29 @@ class FSM {
         // }
       }
     },
-    {
-      name: 'lines',
-      init: () => {
-        document.querySelector('#info').textContent = this.currentScanner.upperLine;
-      },
-      enter: () => { },
-      up: () => {
-        if (this.currentScanner.upperLine > 0)
-          this.currentScanner.upperLine -= 1;
-      },
-      down: () => {
-        if (this.currentScanner.upperLine < this.currentScanner.lowerLine - 1)
-          this.currentScanner.upperLine += 1;
-      },
-      left: () => {
-        if (this.currentScanner.lowerLine > this.currentScanner.upperLine + 1)
-          this.currentScanner.lowerLine -= 1;
-      },
-      right: () => {
-        if (this.currentScanner.lowerLine < window.innerHeight)
-          this.currentScanner.lowerLine += 1;
-      }
-    },
+    // {
+    //   name: 'lines',
+    //   init: () => {
+    //     document.querySelector('#info').textContent = this.currentScanner.upperLine;
+    //   },
+    //   enter: () => { },
+    //   up: () => {
+    //     if (this.currentScanner.upperLine > 0)
+    //       this.currentScanner.upperLine -= 1;
+    //   },
+    //   down: () => {
+    //     if (this.currentScanner.upperLine < this.currentScanner.lowerLine - 1)
+    //       this.currentScanner.upperLine += 1;
+    //   },
+    //   left: () => {
+    //     if (this.currentScanner.lowerLine > this.currentScanner.upperLine + 1)
+    //       this.currentScanner.lowerLine -= 1;
+    //   },
+    //   right: () => {
+    //     if (this.currentScanner.lowerLine < window.innerHeight)
+    //       this.currentScanner.lowerLine += 1;
+    //   }
+    // },
     {
 
       name: 'export',
@@ -171,6 +190,9 @@ class FSM {
         data.getNextImage();
         canvas.clearCanvas();
         if (canvas.showData) canvas.drawValueLine(this.currentScanner.values);
+      },
+      space: () => {
+        this.state.enter();
       }
     }
 
@@ -188,7 +210,7 @@ class FSM {
   next() {
     this.stateIdx = (this.stateIdx + 1) % this.states.length;
     this.setState(this.states[this.stateIdx]);
-    this.state.init();
+    // this.state.init();
   }
 
   /**
@@ -199,7 +221,7 @@ class FSM {
     if (this.stateIdx < 0)
       this.stateIdx = this.states.length - 1;
     this.setState(this.states[this.stateIdx]);
-    this.state.init();
+    // this.state.init();
   }
 
   setState(newState) {

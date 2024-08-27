@@ -11,13 +11,14 @@
 ## To Do
 
 - **functions**:
-- [ ] **bug**: scn on/off malt linie doppelt, nach imageProcessing!
 - [ ] scanners have different colors - active scanner with inverted image?
 - [ ] speichere imageProcessing-Voreinstellungen für Bilder
-- [ ] globale upper+lower thresholds
 - [ ] nanoKontrol
 - [ ] change data x when resizing image
 - [ ] hide mouse when fullscreen application
+- **refactoring**:
+- [ ]`fsm functions as dict`:
+     `fsm.state[keyEvent.key]();`
 - **Zukunftsmusik**
 - [ ] `npm run random` to shuffle images
 - [ ] multiple lines per image for different thresholds
@@ -31,6 +32,9 @@
 - Beim erstmaligen Laden dieses Arrays werden alle Werte auf `canvas.height / 2` gesetzt
 
 ## Log
+27.08.2024
+- [x] **bug**: scan on/off malt linie doppelt, nach imageProcessing!
+- [x] globale upper+lower thresholds
 22.08.2024
 - [x] switch (active) scanners using TAB
 19.08.2024

@@ -164,16 +164,18 @@ export class Data {
       await this.fetchJSON(currentImageJsonFile);
   }
 
+  /**
+   * create gray and binary image with current setting
+   */
   updateImageThreshold() {
-
     cv.cvtColor(this.img, this.gray, cv.COLOR_RGBA2GRAY);
     cv.threshold(this.gray, this.binary, this.upperThresh, this.lowerThresh, cv.THRESH_BINARY);
   }
 
   /**
-   * Function to process the image and export the JSON file
+   * find black pixels and create data array
    */
-  processImage() {
+  findBlackPixels() {
 
     console.log("process");
     console.assert(this.binary, "this.binary", this.binary);

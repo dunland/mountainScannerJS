@@ -92,10 +92,10 @@ export class Scanner {
     setActive(state){
         this.active = state;
 
-        if (this.active) {
+        if (this.active && data.activeScanners.indexOf(this) < 0) {
           data.activeScanners.push(this);
         }
-        else {
+        else if (!this.active){
           data.activeScanners.splice(data.activeScanners.indexOf(this), 1);
         }
     }
