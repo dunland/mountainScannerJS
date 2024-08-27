@@ -11,14 +11,16 @@
 ## To Do
 
 - **functions**:
-- [ ] multiple lines per image for different thresholds
-- **usability**:
-- [ ] switch scanners using TAB
+- [ ] **bug**: scn on/off malt linie doppelt, nach imageProcessing!
 - [ ] scanners have different colors - active scanner with inverted image?
+- [ ] speichere imageProcessing-Voreinstellungen für Bilder
+- [ ] globale upper+lower thresholds
 - [ ] nanoKontrol
 - [ ] change data x when resizing image
 - [ ] hide mouse when fullscreen application
 - **Zukunftsmusik**
+- [ ] `npm run random` to shuffle images
+- [ ] multiple lines per image for different thresholds
 - [ ] navigation using arrow keys and sub-menus
 - [ ] parallel displays
 - [ ] weitere cv-Verarbeitungsmöglichkeiten: calman filter, ...
@@ -29,6 +31,8 @@
 - Beim erstmaligen Laden dieses Arrays werden alle Werte auf `canvas.height / 2` gesetzt
 
 ## Log
+22.08.2024
+- [x] switch (active) scanners using TAB
 19.08.2024
 - [x] only enter "processImage" upon space bar
 

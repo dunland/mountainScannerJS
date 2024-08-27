@@ -16,7 +16,7 @@ export class Scanner {
         this.imgElement = imgElement;
 
         this.centerX = 0; // center of movingRegion
-        this.moveSpeed = 1;
+        this.moveSpeed = 0.4;
         this.position = 0;
         this.regionWidth = 20;
 
@@ -85,6 +85,10 @@ export class Scanner {
         valueElement.textContent = '___' + value + "\n" + asMidi(value);
     }
 
+    /**
+     * add or remove this scanner to the list of active scanners
+     * @param {*} state 
+     */
     setActive(state){
         this.active = state;
 

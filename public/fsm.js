@@ -55,7 +55,6 @@ class FSM {
       enter: () => {
         if (this.processingModeOn) {
           data.processImage();
-          this.currentScanner.values = data.tempValues;
           this.processingModeOn = false;
           this.currentScanner.setActive(true);
         }
@@ -102,7 +101,7 @@ class FSM {
       name: 'midiCC',
       init: () => {
         document.querySelector('#info').textContent = (this.currentScanner.cc >= 0) ? `${this.currentScanner.cc} ${Midi.synthConfig[this.currentScanner.cc]}` : 'sendNote';
-       },
+      },
       enter: () => { },
       up: () => {
         this.tempCCidx = (this.tempCCidx + 1) % (Object.keys(Midi.synthConfig).length + 1);
@@ -130,29 +129,29 @@ class FSM {
         // }
       }
     },
-    // {
-    //   name: 'lines',
-    //   init: () => {
-    //     document.querySelector('#info').textContent = this.currentScanner.upperLine;
-    //   },
-    //   enter: () => { },
-    //   up: () => {
-    //     this.currentScanner.upperLine -= 1;
-    //     canvas.drawHorizontalLine(this.currentScanner.upperLine)
-    //   },
-    //   down: () => {
-    //     this.currentScanner.upperLine += 1;
-    //     canvas.drawHorizontalLine(this.currentScanner.upperLine)
-    //   },
-    //   left: () => {
-    //     this.currentScanner.lowerLine -= 1;
-    //     canvas.drawHorizontalLine(this.currentScanner.lowerLine);
-    //   },
-    //   right: () => {
-    //     this.currentScanner.lowerLine += 1;
-    //     canvas.drawHorizontalLine(this.currentScanner.lowerLine);
-    //   }
-    // }, 
+    {
+      name: 'lines',
+      init: () => {
+        document.querySelector('#info').textContent = this.currentScanner.upperLine;
+      },
+      enter: () => { },
+      up: () => {
+        if (this.currentScanner.upperLine > 0)
+          this.currentScanner.upperLine -= 1;
+      },
+      down: () => {
+        if (this.currentScanner.upperLine < this.currentScanner.lowerLine - 1)
+          this.currentScanner.upperLine += 1;
+      },
+      left: () => {
+        if (this.currentScanner.lowerLine > this.currentScanner.upperLine + 1)
+          this.currentScanner.lowerLine -= 1;
+      },
+      right: () => {
+        if (this.currentScanner.lowerLine < window.innerHeight)
+          this.currentScanner.lowerLine += 1;
+      }
+    },
     {
 
       name: 'export',

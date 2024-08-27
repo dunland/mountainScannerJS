@@ -182,7 +182,7 @@ export class Data {
     this.tempValues = [];
     for (let col = 0; col < this.binary.cols; col++) {
       let foundBlack = false;
-      for (let row = 0; row < this.binary.rows; row++) {
+      for (let row = fsm.currentScanner.upperLine; row < fsm.currentScanner.lowerLine; row++) {
         if (this.binary.ucharPtr(row, col)[0] === 0) {
           this.tempValues.push(row);
           foundBlack = true;

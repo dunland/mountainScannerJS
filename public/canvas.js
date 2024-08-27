@@ -56,16 +56,17 @@ export class Canvas {
 
     animate() {
         this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-        if (fsm.processingModeOn)
+        if (fsm.processingModeOn) {
             cv.imshow('canvas', data.binary);
+        }
         else
             cv.imshow('canvas', data.img);
-
-        // this.drawHorizontalLine(scanner.upperLine);
-        // this.drawHorizontalLine(scanner.lowerLine);
+    
+        this.drawHorizontalLine(fsm.currentScanner.upperLine);
+        this.drawHorizontalLine(fsm.currentScanner.lowerLine);
         for (let index = 0; index < data.activeScanners.length; index++) {
             const scanner = data.activeScanners[index];
-            if (!(scanner == fsm.currentScanner && fsm.processingModeOn)){
+            if (!(scanner == fsm.currentScanner && fsm.processingModeOn)) {
                 scanner.moveRegion();
                 this.drawVerticalLine(scanner);
                 if (this.showData) this.drawValueLine(scanner);
