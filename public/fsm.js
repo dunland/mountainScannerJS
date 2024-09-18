@@ -2,7 +2,6 @@ import { Canvas } from "./canvas.js";
 import { Data } from "./data.js";
 import { Midi } from "./webMidi.js";
 import { onKeyDown } from "./UserInteraction.js"
-import { colorFrom7bitValue } from "./utils.js";
 import { Scanner } from "./scanner.js";
 
 export const data = new Data();
@@ -44,7 +43,7 @@ class FSM {
     {
       name: "processImage",
       init: () => {
-        document.querySelector('#info').textContent = `${data.upperThresh} | ${data.lowerThresh}`;
+        this.updateInfo();
         this.processingModeOn = false;
       },
       space: () => {
@@ -108,7 +107,7 @@ class FSM {
     {
       name: 'scan',
       init: () => {
-        document.querySelector('#info').textContent = `[SPACE] ${this.currentScanner.active}`;
+        this.updateInfo();
         console.log(this.currentScanner);
       },
       enter: () => { },
@@ -119,7 +118,7 @@ class FSM {
     {
       name: 'midiCC',
       init: () => {
-        document.querySelector('#info').textContent = (this.currentScanner.cc >= 0) ? `${this.currentScanner.cc} ${Midi.synthConfig[this.currentScanner.cc]}` : 'sendNote';
+        this.updateInfo();
       },
       enter: () => { },
       up: () => {
@@ -175,7 +174,7 @@ class FSM {
 
       name: 'export',
       init: () => {
-        document.querySelector('#info').textContent = `[SPACE] >> ${data.imagePath}`;
+        this.updateInfo();
       },
       enter: () => { },
       space: () => {
@@ -244,10 +243,12 @@ class FSM {
   updateInfo() {
 
     let value = '';
+    document.getElementById('info').style.fontWeight = 'normal';
 
     switch (this.state.name) {
+
       case "processImage":
-        value = `${data.upperThresh} | ${data.lowerThresh}`
+        value = `[i,o,k,l,↓,↑] ${data.upperThresh} | ${data.lowerThresh}`
         break;
 
       case "scan":

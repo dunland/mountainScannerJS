@@ -55,14 +55,31 @@ export class Canvas {
     }
 
     animate() {
-        this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
+        // this.ctx.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
         if (fsm.processingModeOn) {
             cv.imshow('canvas', data.binary);
             this.drawHorizontalLine(fsm.currentScanner.upperLine);
             this.drawHorizontalLine(fsm.currentScanner.lowerLine);
         }
-        else
-            cv.imshow('canvas', data.img);
+        else {
+            // cv.imshow('canvas', data.img);
+            let rowLimit = window.innerHeight - fsm.currentScanner.currentValue || 0;
+            let y = fsm.currentScanner.currentValue || 0;
+            let rect = new cv.Rect(fsm.currentScanner.centerX, y, 1, rowLimit);
+            let columnROI = data.img.roi(rect);
+
+            // Create an empty output matrix to hold the current column
+            if (!data.compositeImage)
+                data.compositeImage = new cv.Mat.zeros(data.img.rows, data.img.cols, data.img.type());
+
+            // Copy the ROI (column) to the output at the correct location
+            columnROI.copyTo(data.compositeImage.roi(rect));
+
+            // Draw the current output on the canvas
+            cv.imshow('canvas', data.compositeImage);
+
+            columnROI.delete();
+        }
 
         for (let index = 0; index < data.activeScanners.length; index++) {
             const scanner = data.activeScanners[index];

@@ -12,6 +12,7 @@ export class Scanner {
         this.active = false;
         this.values = [];
         this.currentIndex = 0;
+        this.currentValue = 0; // = this.values[this.currentIndex]
 
         this.imgElement = imgElement;
 
@@ -77,12 +78,12 @@ export class Scanner {
 
         const valueElement = document.querySelector('.value-display');
         valueElement.style.color = this.color;
-        const value = this.values[this.currentIndex];
+        this.currentValue = this.values[this.currentIndex];
 
         // Update the position and content of the value display
         valueElement.style.left = this.position + 'px';
-        valueElement.style.top = value - 15 + 'px';
-        valueElement.textContent = '___' + value + "\n" + asMidi(value);
+        valueElement.style.top = this.currentValue - 15 + 'px';
+        valueElement.textContent = '___' + this.currentValue + "\n" + asMidi(this.currentValue);
     }
 
     /**

@@ -22,9 +22,14 @@
 - **Zukunftsmusik**
 - [ ] `npm run random` to shuffle images
 - [ ] multiple lines per image for different thresholds
-- [ ] navigation using arrow keys and sub-menus
+- [ ] navigation using sub-menus
 - [ ] parallel displays
 - [ ] weitere cv-Verarbeitungsmöglichkeiten: calman filter, ...
+- [ ] Pd integration / OSC
+    - [javascript websocket](https://javascript.info/websocket)
+    - [MDN UDP](https://developer.mozilla.org/en-US/docs/Glossary/UDP), [MDN Webtransport API](https://developer.mozilla.org/en-US/docs/Web/API/WebTransport_API)
+    - [WebPd github](https://github.com/sebpiq/WebPd?tab=readme-ov-file) - Run your Pure Data patches on the web. 
+    - [Pdjs gihtub](https://github.com/mganss/pdjs) - JavaScript External for Pure Data based on V8 
 
 ## Usage
 
@@ -32,6 +37,7 @@
 - Beim erstmaligen Laden dieses Arrays werden alle Werte auf `canvas.height / 2` gesetzt
 
 ## Log
+
 27.08.2024
 - [x] **bug**: scan on/off malt linie doppelt, nach imageProcessing!
 - [x] globale upper+lower thresholds
